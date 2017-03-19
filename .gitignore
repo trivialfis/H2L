@@ -1,0 +1,14 @@
+*.odt
+*.pdf
+*~
+*.png
+*.jpg
+*.pyc
+*.xml
+*.txt
+*.pkl
+*.org
+*.tgz
+*.hdf5
+*.gz
+*.json
