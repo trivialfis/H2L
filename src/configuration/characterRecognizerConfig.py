@@ -6,17 +6,17 @@ NAME = 'character_recognizer'
 CHARACTER_MAP = '../resource/character_map'
 
 BATCH_SIZE = 128
-CLASS_NUM = 47
+CLASS_NUM = 40
 INIT_LEARNING_RATE = 2
 EPOCH = 600
-SAMPLES_PER_EPOCH = 470190
+SAMPLES_PER_EPOCH = 390158
 IMG_ROWS, IMG_COLS = 48, 48
 INPUT_SHAPE = (IMG_ROWS, IMG_COLS, 1)
 
 # Data loader
 TRAIN_DATA = '../resource/characters_pkl/characters'
 VALIDATION_DATA = '../resource/characters_pkl/validation.pkl'
-FILES_COUNT = 10
+FILES_COUNT = 6
 
 
 def modelExists():

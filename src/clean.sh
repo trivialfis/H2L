@@ -1,2 +1,2 @@
 #!/usr/bin/bash
-rm *.png
+rm *.png temp.xml texFile.tex texFile.aux texFile.log 2> /dev/null 

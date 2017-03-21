@@ -71,12 +71,12 @@ def sequentialModel():
         padding=(2, 2, 4, 4)
     ))
     model.add(Convolution2D(
-        128, 5, 5, border_mode='same',
+        64, 5, 5, border_mode='same',
         activation='relu',
     ))
     model.add(MaxPooling2D(pool_size=(2, 2), border_mode='same'))
     model.add(Convolution2D(
-        64, 3, 3, border_mode='valid'
+        128, 3, 3, border_mode='valid'
     ))
     model.add(MaxPooling2D(pool_size=(2, 2), border_mode='same'))
     model.add(Flatten())

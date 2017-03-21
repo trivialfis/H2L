@@ -22,7 +22,7 @@ def removeEdge(image):
         for i in range(length):
             index = -i if reverse else i
             filled = np.sum(image[index, :])
-            if filled == 0.0:
+            if filled <= 1.0:
                 count += 1
             else:
                 break
@@ -33,7 +33,7 @@ def removeEdge(image):
         for i in range(length):
             index = -i if reverse else i
             filled = np.sum(image[:, index])
-            if filled == 0.0:
+            if filled <= 1.0:
                 count += 1
             else:
                 break
@@ -45,11 +45,9 @@ def removeEdge(image):
         left = detectCol(image, width)
         down = height - detectRow(image, height, True)
         right = width - detectCol(image, width, True)
-        print('top: ', top, ' down: ', down, ' left: ', left, ' right: ', right)
         rows = down - top
         cols = right - left
         if rows < height * 0.1 or cols < width * 0.1:
-            print(rows, height*0.2, rows<height*0.2, cols, width*0.2, cols < width*0.2, 'Return full image')
             return image
 
         result = np.array(image[top: down+1, left: right+1],
@@ -64,7 +62,6 @@ def removeEdge(image):
     length = max(image.shape)
     if (height, width) != image.shape:
         image = resize(image, outputShape=(length, length))
-        # print('After resize: ', image.shape)
         image = rescale(image, height)
     return image
 
@@ -105,6 +102,9 @@ def rescale(image, height, label=None):
 
 
 def resize(image, outputShape=(48, 48)):
+    if len(image.shape) != 2:
+        raise ValueError('Expected image shape (x, y), got ' +
+                         str(image.shape))
     maxInput = max(image.shape)
     maxOutput = max(outputShape)
     resized = np.zeros(outputShape)

@@ -54,7 +54,7 @@ def slantcorrectWords():
 
 def characters():
     try:
-#        ap.start()
+        # ap.start()
         mp.start()
     except KeyboardInterrupt:
         print('\nExit')

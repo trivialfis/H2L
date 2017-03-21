@@ -51,7 +51,7 @@ class segmenter(object):
         if len(image.shape) != 2:
             raise ValueError('expected image shape (x, y), got ', image.shape)
         height, width = image.shape
-        print("Length ", width)
+        # print("Length ", width)
         if width <= height*0.2:
             return []
         i = 0
@@ -67,7 +67,7 @@ class segmenter(object):
                 i = j
                 segmentationPoints.append(mid)
             i += 1
-        print(segmentationPoints)
+        # print(segmentationPoints)
         characterList = self.__extractCharacters(image, segmentationPoints)
         return characterList
 

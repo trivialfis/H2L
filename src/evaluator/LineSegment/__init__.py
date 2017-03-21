@@ -1,15 +1,15 @@
-# wc.py --- 
-#
-# Filename: wc.py
+# __init__.py --- 
+# 
+# Filename: __init__.py
 # Description: 
 # Author: fis
 # Maintainer: 
-# Created: Fri Mar 17 20:03:14 2017 (+0800)
+# Created: Mon Mar 20 17:49:55 2017 (+0800)
 # Version: 
 # Package-Requires: ()
-# Last-Updated: Sat Mar 18 01:40:50 2017 (+0800)
+# Last-Updated: Mon Mar 20 17:50:12 2017 (+0800)
 #           By: fis
-#     Update #: 35
+#     Update #: 1
 # URL: 
 # Doc URL: 
 # Keywords: 
@@ -44,14 +44,8 @@
 # 
 
 # Code:
-import os
-print('='*41)
-for root, subdirs, filenames in os.walk('./'):
-    subdirs.sort()
-    for directory in subdirs:
-        images = os.listdir(os.path.join(root, directory))
-        print('|\t' + directory + '\t\t|\t' + str(len(images)) + '\t|')
-        print('-'*41)
-print('='*41)
+
+
+
 # 
-# wc.py ends here
+# __init__.py ends here

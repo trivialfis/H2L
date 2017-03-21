@@ -9,6 +9,9 @@
 *.pkl
 *.org
 *.tgz
+*.json
 *.hdf5
 *.gz
-*.json
+*.tex
+*.log
+*.aux

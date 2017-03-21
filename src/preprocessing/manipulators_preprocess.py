@@ -10,6 +10,7 @@ from tqdm import tqdm
 import numpy as np
 import os
 import pickle
+from preprocessing import reform
 from configuration import characterRecognizerConfig as config
 
 IMAGES_PATH = '../resource/characters/'
@@ -64,15 +65,20 @@ def loadImages(imagesInfo, bar):
 
 
 def resize(labeledImages, bar):
-    # print('Resizing images')
     outputShape = (HEIGHT, HEIGHT)
     result = []
     for image, label in labeledImages:
         bar.update(1)
         try:
             resizedImage = transform.resize(image, outputShape)
-            resizedImage = resizedImage.reshape(HEIGHT, HEIGHT, 1)
             resizedImage = np.array(binarize(resizedImage), dtype=np.float32)
+            resizedImage[0, :] = 0
+            resizedImage[-1, :] = 0
+            resizedImage[:, 0] = 0
+            resizedImage[:, -1] = 0
+            resizedImage = reform.removeEdge(resizedImage)
+            resizedImage = reform.binarize(resizedImage, mode='greater')
+            resizedImage = resizedImage.reshape(HEIGHT, HEIGHT, 1)
         except ValueError:
             print('Resize error, image shape: ', image.shape)
             continue

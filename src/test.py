@@ -1,10 +1,13 @@
 #!/bin/python3
 from skimage import io, filters
 from skimage.transform import rescale, resize
+from PIL import Image
 import numpy as np
 from configuration import baseSegmenterConfig as config
 from evaluator import baseCharSegmenter, characterRecognizer, wordSegmenter
 from evaluator import heuristicSegmenter
+from evaluator import extractDocument
+from evaluator.LineSegment import LineSegment
 from preprocessing import reform
 from normalization import slantCorrect
 from evaluate import generate, heursiticGenerate
@@ -81,9 +84,8 @@ def testHeuristicSegmenter():
 
 
 def testHeuristicEvaluate():
-    imageFile = '../resource/word_test_image.png'
+    imageFile = '../resource/test/testform.jpg'
     image = io.imread(imageFile)
-    image = reform.binarize(image, mode='less', threshold='isodata')
     result = heursiticGenerate(image)
     print(result)
 
@@ -96,9 +98,31 @@ def testRecognizer():
     result = rc.predict(image)
     print(result)
 
+
+def testLineSegmenter():
+    imageFile = '../resource/test/character.png'
+    image = io.imread(imageFile)
+    image = reform.binarize(image, mode='greater', threshold='isodata')
+    result = LineSegment.LineSegment(image)
+    print(len(result))
+    count = 0
+    for img in result:
+        io.imsave(arr=img, fname='ls' + str(count) + '.png')
+
+
+def testExtractDoc():
+    imageFile = '../resource/test/testform.jpg'
+    image = io.imread(imageFile)
+    result = extractDocument.drawContours(image)
+    plt.imshow(result, cmap='gray')
+    plt.show()
+
+
 if __name__ == '__main__':
-    testRecognizer()
-    # testHeuristicEvaluate()
+    testHeuristicEvaluate()
+    # testRecognizer()
     # testCharSegmenter()
     # testEvaluate()
     # testHeuristicSegmenter()
+    # testLineSegmenter()
+    # testExtractDoc()
