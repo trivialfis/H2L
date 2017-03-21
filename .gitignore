@@ -1,17 +1,22 @@
+# doc
 *.odt
 *.pdf
-*~
+
+# resource
 *.png
 *.jpg
-*.pyc
 *.xml
 *.txt
 *.pkl
 *.org
 *.tgz
-*.json
-*.hdf5
 *.gz
-*.tex
+
+# temp
 *.log
 *.aux
+*.pyc
+*.json
+*.hdf5
+*~
+*.tex

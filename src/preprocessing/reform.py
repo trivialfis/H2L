@@ -76,7 +76,8 @@ def binarize(image, mode=MODE, threshold=THRESHOLD):
     thMapping = {
         'average': lambda image: np.average(image),
         'isodata': lambda image: filters.threshold_isodata(image),
-        'otsu': lambda image: filters.threshold_otsu(image)
+        'otsu': lambda image: filters.threshold_otsu(image),
+        'max': lambda image: np.max(image) * 0.7
     }
     modeMapping = {
         'less': lambda image, value: image < value,

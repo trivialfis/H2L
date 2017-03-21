@@ -2,7 +2,6 @@
 
 import cv2
 import numpy as np
-from matplotlib import pyplot as plt
 
 def drawContours(img):
 	# img = cv2.imread('../image/test1.jpg',cv2.IMREAD_COLOR)#读入图片

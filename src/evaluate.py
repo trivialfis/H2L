@@ -63,6 +63,34 @@ def generate(image, preprocess=False):
 
 def heursiticGenerate(image):
 
+    def findMid(line):
+        if len(line.shape) != 2:
+            raise ValueError('Expected image with shape (x, y), got ' +
+                             str(line.shape))
+        for i in range(line.shape[0]):
+            if np.max(line[i, :]) != 0:
+                top = i
+                break
+        for i in range(line.shape[0]):
+            if np.max(line[-i, :]) != 0:
+                bottom = line.shape[0] - i + 1
+                break
+        middle = (top + bottom) / 2
+        return middle
+
+    def isSuper(character, middle):
+        if len(character.shape) != 2:
+            raise ValueError('Expected image with shape (x, y), got ' +
+                             str(line.shape))
+        for i in range(character.shape[0]):
+            if np.max(character[-i, :]) != 0:
+                bottom = character.shape[1] - i + 1
+                break
+        if bottom < middle:
+            return True
+        else:
+            return False
+
     def segmentCharacters(line, root):
         if len(line.shape) != 2:
             raise ValueError('Expected image with shape (x, y), got ' +
@@ -84,9 +112,14 @@ def heursiticGenerate(image):
             ET.SubElement(item, 'oper_or_num').text = char
 
     image = extractDocument.drawContours(image)
+    print('Document extracted')
     image = Image.fromarray(image)
     image = np.array(image.convert('L'), dtype=np.float32)
-    image = reform.binarize(image, mode='less')
+    plt.imshow(image, cmap='gray')
+    plt.show()
+    image = reform.binarize(image, mode='less', threshold='max')
+    plt.imshow(image, cmap='gray')
+    plt.show()
     if len(image.shape) != 2:
         raise ValueError('Expected image with shape (x, y), got '
                          + str(image.shape))
@@ -95,34 +128,6 @@ def heursiticGenerate(image):
     root = ET.Element('formula', shelf='math')
     for line in lineImages:
         segmentCharacters(line, root)
-    # image = reform.rescale(image, 64)
-    # characterImages = hs.segment(image)
-    # print('char num: ', len(characterImages))
-    # characterImages = [reform.resize(
-    #     char, (crconfig.IMG_COLS, crconfig.IMG_COLS)
-    # ) for char in characterImages]
-    # saveImages.counter = 0
-    # saveImages(characterImages, prefix='bef')
-    # characterImages = [reform.removeEdge(char)
-    #                    for char in characterImages]
-    # characterImages = [reform.binarize(char, mode='greater')
-    #                    for char in characterImages]
-    # saveImages(characterImages, prefix='aft')
-    # characterImages = [char.reshape(char.shape + (1, ))
-    #                    for char in characterImages]
-    # characters = []
-    # root = ET.Element('formula', shelf='math')
-    # for img in characterImages:
-    #     chars = LineSegment.segment(img)
-    #     print('char shape ', chars.shape)
-    #     chars = [reform.resize(char) for char in chars]
-    #     chars = [char.reshape(char.shape+(1, ))
-    #              for char in chars]
-    #     chars = np.array(chars, dtype=np.float32)
-    #     chars = cr.predict(chars)
-    #     for c in chars:
-    #         ET.SubElement(root, 'item', name='oper_or_num').text = c
-    #     characters.append(chars)
     xmlFilename = 'temp.xml'
     tree = ET.ElementTree(root)
     tree.write(xmlFilename)
@@ -133,10 +138,6 @@ def heursiticGenerate(image):
     call(['pdflatex', texFileName])
     with open(os.devnull, 'wb') as dump:
         call(['./clean.sh'], stdout=dump, stderr=dump)
-    # return characters
-    # characterImages = np.array(characterImages, dtype=np.float32)
-    # characters = cr.predict(characterImages)
-    # return characters
 
 
 if __name__ == '__main__':

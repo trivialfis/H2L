@@ -11,15 +11,16 @@ from skimage import transform
 
 
 class segmenter(object):
-    def __extractCharacters(self, image, segmentationPoints):
+    def __extractCharacters(self, image, segmentationPoints, HEIGHT):
         if len(image.shape) != 2:
             raise ValueError('Expected image shape (x, y), got ', image.shape)
         lastPoint = 0
         characterList = []
         for i in range(1, len(segmentationPoints)):
-            character = np.zeros((config.HEIGHT, config.HEIGHT))
+            character = np.zeros((HEIGHT, HEIGHT))
             rows, cols = image.shape
             length = segmentationPoints[i] - segmentationPoints[lastPoint]
+            # print('length: ', length)
             if length <= 0:
                 raise ValueError(
                     'Negative length, sp[i]:'+str(
@@ -28,8 +29,8 @@ class segmenter(object):
                         segmentationPoints[lastPoint]
                     )
                 )
-            if length > config.HEIGHT:
-                ratio = config.HEIGHT / length
+            if length > HEIGHT:
+                ratio = HEIGHT / length
             else:
                 ratio = 1
             resized = transform.rescale(
@@ -37,8 +38,8 @@ class segmenter(object):
                       segmentationPoints[lastPoint]:
                       segmentationPoints[lastPoint]+length],
                 ratio)
-            colStart = (config.HEIGHT - resized.shape[1]) // 2
-            rowStart = (config.HEIGHT - resized.shape[0]) // 2
+            colStart = (HEIGHT - resized.shape[1]) // 2
+            rowStart = (HEIGHT - resized.shape[0]) // 2
             character[
                 rowStart:rowStart+resized.shape[0],
                 colStart:colStart+resized.shape[1]
@@ -50,8 +51,8 @@ class segmenter(object):
     def segment(self, image):
         if len(image.shape) != 2:
             raise ValueError('expected image shape (x, y), got ', image.shape)
+        print('image shape ', image.shape)
         height, width = image.shape
-        # print("Length ", width)
         if width <= height*0.2:
             return []
         i = 0
@@ -67,8 +68,10 @@ class segmenter(object):
                 i = j
                 segmentationPoints.append(mid)
             i += 1
-        # print(segmentationPoints)
-        characterList = self.__extractCharacters(image, segmentationPoints)
+        print(segmentationPoints)
+        characterList = self.__extractCharacters(image,
+                                                 segmentationPoints,
+                                                 HEIGHT=height)
         return characterList
 
 

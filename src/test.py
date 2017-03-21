@@ -1,7 +1,6 @@
 #!/bin/python3
 from skimage import io, filters
-from skimage.transform import rescale, resize
-from PIL import Image
+from skimage.transform import rescale  # , resize
 import numpy as np
 from configuration import baseSegmenterConfig as config
 from evaluator import baseCharSegmenter, characterRecognizer, wordSegmenter
@@ -118,8 +117,31 @@ def testExtractDoc():
     plt.show()
 
 
+def testSegmentRecognize():
+    imageFile = '../resource/test/word_test_image.png'
+    image = io.imread(imageFile)
+    image = reform.binarize(image, mode='greater')
+    hs = heuristicSegmenter.segmenter()
+    characterImages = hs.segment(image)
+    characterImages = [reform.removeEdge(img) for img in characterImages]
+    '''
+    for img in characterImages:
+        plt.imshow(img, cmap='gray')
+        plt.show()
+    '''
+    cr = characterRecognizer.recognizer()
+    characterImages = [reform.resize(char, outputShape=(48, 48))
+                       for char in characterImages]
+    characterImages = [char.reshape(char.shape + (1, ))
+                       for char in characterImages]
+    characterImages = np.array(characterImages, dtype=np.float32)
+    characters = cr.predict(characterImages)
+    print(characters)
+
+
 if __name__ == '__main__':
-    testHeuristicEvaluate()
+    testSegmentRecognize()
+    # testHeuristicEvaluate()
     # testRecognizer()
     # testCharSegmenter()
     # testEvaluate()

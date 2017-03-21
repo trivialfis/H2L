@@ -7,9 +7,9 @@
 # Created: Fri Mar 17 20:21:20 2017 (+0800)
 # Version:
 # Package-Requires: ()
-# Last-Updated: Sat Mar 18 16:14:24 2017 (+0800)
+# Last-Updated: Sat Mar 18 16:24:41 2017 (+0800)
 #           By: fis
-#     Update #: 50
+#     Update #: 62
 # URL:
 # Doc URL:
 # Keywords:
@@ -17,10 +17,10 @@
 # 
 # 
 
-# Commentary: 
-# 
-# 
-# 
+# Commentary:
+#
+#
+#
 # 
 
 # Change Log:
@@ -45,7 +45,7 @@
 
 # Code:
 import os
-from skimage import io
+from skimage import io, exposure
 from random import shuffle
 
 
@@ -55,10 +55,13 @@ def cleaning(NAME):
     os.mkdir(TARGET)
     if len(imageFiles) > 10000:
         shuffle(imageFiles)
-        imageFiles = imageFiles[:10001]
         path = './' + NAME + '/'
         images = [io.imread(path+img) for img in imageFiles
                   if img.endswith('.png') or img.endswith('.jpg')]
+        images = [img for img in images if not exposure.is_low_contrast(img)]
+        images = images[0:10000]
+        if len(images[0].shape) != 2:
+            raise ValueError('Got', imageFiles[0].shape)
         print(len(images))
         count = 0
         for img in images:
@@ -67,7 +70,7 @@ def cleaning(NAME):
 
 
 if __name__ == '__main__':
-    for i in range(1, 10):
+    for i in range(10):
         print(i)
         cleaning(str(i))
 #
