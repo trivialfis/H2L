@@ -2,9 +2,10 @@
 
 import cv2
 import numpy as np
+from matplotlib import pyplot as plt
 
 def drawContours(img):
-	# img = cv2.imread('../image/test1.jpg',cv2.IMREAD_COLOR)#读入图片
+	#img = cv2.imread('../image/test4.jpg',cv2.IMREAD_COLOR)#读入图片
 	im = cv2.fastNlMeansDenoisingColored(img,None,10,10,7,21)#彩色图去噪
 	imgray=cv2.cvtColor(im,cv2.COLOR_BGR2GRAY)#转化为灰度图
 	'''
@@ -54,20 +55,23 @@ def drawContours(img):
 	#上左右下
 	for num1 in range(0,sp2):
 		for num2 in range(0,sp[1]):
-			cropImg[num1,num2] = cropImg[sp2,num2]
+			cropImg[num1,num2] = 255
 	for num1 in range(0,sp[0]):
 		for num2 in range(0,sp2):
-			cropImg[num1,num2] = cropImg[num1,sp2]
+			cropImg[num1,num2] = 255
 	for num1 in range(0,sp[0]):
 		for num2 in range(sp[1]-sp2,sp[1]):
-			cropImg[num1,num2] = cropImg[num1,sp[1]-sp2]
+			cropImg[num1,num2] = 255
 	for num1 in range(sp[0]-sp2,sp[0]):
 		for num2 in range(0,sp[1]):
-			cropImg[num1,num2] = cropImg[sp[0]-sp2,num2]
+			cropImg[num1,num2] = 255
+	finalgray=cv2.cvtColor(cropImg,cv2.COLOR_BGR2GRAY)
+	ret,finalImg = cv2.threshold(imgray,80,85,0)
 	#cv2.namedWindow('image', cv2.WINDOW_NORMAL)
 	#cv2.namedWindow('Image', cv2.WINDOW_NORMAL)
 	#cv2.imshow("image",im)
 	#cv2.imshow("Image", cropImg)
 	#cv2.waitKey(0)
 	#cv2.imwrite(../image/test_after.jpg,img)
-	return cropImg
+	
+	return finalImg

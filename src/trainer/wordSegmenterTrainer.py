@@ -7,7 +7,7 @@ Last modified:  7 Feb 2017
 from keras import models
 from keras.layers import Dense, Flatten, Dropout
 from keras.layers import ZeroPadding2D, Conv2D, MaxPooling2D
-from keras.regularizers import l2, activity_l2
+from keras.regularizers import l2
 from keras.callbacks import ModelCheckpoint, LearningRateScheduler
 import math
 from data.lines import segmentationData
@@ -44,7 +44,7 @@ class trainer(object):
                 32,
                 activation='sigmoid',
                 W_regularizer=l2(0.01),
-                activity_regularizer=activity_l2(0.01),
+                activity_regularizer=l2(0.01),
                 init='uniform'
             ))
             self.model.add(Dropout(0.2))

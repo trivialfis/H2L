@@ -10,7 +10,7 @@ A neural network trained to do characters segmentation
 from keras import models
 from keras.layers import Dense, Dropout, Flatten
 from keras.layers import ZeroPadding2D, Convolution2D, MaxPooling2D
-from keras.regularizers import l2, activity_l2
+from keras.regularizers import l2
 # from keras.utils import np_utils
 from keras.optimizers import Adadelta
 from keras.callbacks import LearningRateScheduler, ModelCheckpoint
@@ -65,7 +65,7 @@ class trainer(object):
                 1,
                 activation='relu',
                 W_regularizer=l2(0.01),
-                activity_regularizer=activity_l2(0.01),
+                activity_regularizer=l2(0.01),
                 init='uniform'
             ))
             with open(config.BASE_ARCHITECTURE_FILE, 'w') as jsonFile:

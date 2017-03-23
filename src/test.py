@@ -140,11 +140,14 @@ def testSegmentRecognize():
 
 
 if __name__ == '__main__':
-    testSegmentRecognize()
-    # testHeuristicEvaluate()
-    # testRecognizer()
-    # testCharSegmenter()
-    # testEvaluate()
-    # testHeuristicSegmenter()
-    # testLineSegmenter()
-    # testExtractDoc()
+    try:
+        # testSegmentRecognize()
+        testHeuristicEvaluate()
+        # testRecognizer()
+        # testCharSegmenter()
+        # testEvaluate()
+        # testHeuristicSegmenter()
+        # testLineSegmenter()
+        # testExtractDoc()
+    except KeyboardInterrupt:
+        print('\nExit')

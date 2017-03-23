@@ -31,14 +31,8 @@ def segment(image, min_line_height=0, threshold=None):
     for i in range(len(segment)):
         temp = __GetRectangle(image, segment[i][0], 0,
                               segment[i][1]-segment[i][0], len(image[0]))
-        line_pix.append(temp)
+        line_pix.append(np.array(temp))
     del line_pix[0]
-    line_pix = np.array(line_pix)
-    """for i in range(len(line_pix)):
-        temp = np.array(line_pix[i])
-        line_pix[i] = Transform.Transform(temp)
-        io.imshow(line_pix[i])
-        io.show()"""
     return line_pix
 
 
