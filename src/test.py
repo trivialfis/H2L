@@ -124,11 +124,6 @@ def testSegmentRecognize():
     hs = heuristicSegmenter.segmenter()
     characterImages = hs.segment(image)
     characterImages = [reform.removeEdge(img) for img in characterImages]
-    '''
-    for img in characterImages:
-        plt.imshow(img, cmap='gray')
-        plt.show()
-    '''
     cr = characterRecognizer.recognizer()
     characterImages = [reform.resize(char, outputShape=(48, 48))
                        for char in characterImages]
@@ -139,10 +134,18 @@ def testSegmentRecognize():
     print(characters)
 
 
+def testLineEvaluate():
+    imageFile = '../resource/test/word_test_image.png'
+    image = io.imread(imageFile)
+    image = reform.binarize(image, mode='greater')
+    heursiticGenerate(image)
+
+
 if __name__ == '__main__':
     try:
+        testLineEvaluate()
         # testSegmentRecognize()
-        testHeuristicEvaluate()
+        # testHeuristicEvaluate()
         # testRecognizer()
         # testCharSegmenter()
         # testEvaluate()

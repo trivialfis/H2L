@@ -11,16 +11,12 @@ def drawContours(img):
 	'''
 	gradX = cv2.Sobel(imgray, ddepth=cv2.cv.CV_32F, dx=1, dy=0, ksize=-1)
 	gradY = cv2.Sobel(imgray, ddepth=cv2.cv.CV_32F, dx=0, dy=1, ksize=-1)
-
 	gradient = cv2.subtract(gradX, gradY)
 	gradient = cv2.convertScaleAbs(gradient)
-
 	blurred = cv2.blur(gradient, (9, 9))
 	(_, thresh) = cv2.threshold(blurred, 50, 255, cv2.THRESH_BINARY)
-
 	kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (25, 25))
 	closed = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel)
-
 	closed = cv2.erode(closed, None, iterations=4)
 	closed = cv2.dilate(closed, None, iterations=4)
 	'''
@@ -36,7 +32,6 @@ def drawContours(img):
 	rect = cv2.minAreaRect(c)
 	box = np.int0(cv2.boxPoints(rect))
 	#cv2.drawContours(im,contours,-1,(0,0,255),3)#画轮廓
-
 	Xs = [i[0] for i in box]
 	Ys = [i[1] for i in box]
 	x1 = min(Xs)
@@ -46,12 +41,13 @@ def drawContours(img):
 	hight = y2 - y1
 	width = x2 - x1
 	cropImg = img[y1:y1+hight, x1:x1+width]
-
+	height = 0.10
+	width = 0.10
 	#sp[0]为高，sp[1]为宽
 	sp = cropImg.shape
 	#矫正处理
-	sp1 = int(sp[0]*0.15)
-	sp2 = int(sp[1]*0.15)
+	sp1 = int(sp[0]*height)
+	sp2 = int(sp[1]*width)
 	#上左右下
 	for num1 in range(0,sp2):
 		for num2 in range(0,sp[1]):
@@ -65,13 +61,10 @@ def drawContours(img):
 	for num1 in range(sp[0]-sp2,sp[0]):
 		for num2 in range(0,sp[1]):
 			cropImg[num1,num2] = 255
-	finalgray=cv2.cvtColor(cropImg,cv2.COLOR_BGR2GRAY)
-	ret,finalImg = cv2.threshold(imgray,80,85,0)
 	#cv2.namedWindow('image', cv2.WINDOW_NORMAL)
 	#cv2.namedWindow('Image', cv2.WINDOW_NORMAL)
 	#cv2.imshow("image",im)
 	#cv2.imshow("Image", cropImg)
 	#cv2.waitKey(0)
 	#cv2.imwrite(../image/test_after.jpg,img)
-	
-	return finalImg
+	return cropImg

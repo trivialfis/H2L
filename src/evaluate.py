@@ -14,16 +14,13 @@ from preprocessing import reform
 import xml.etree.ElementTree as ET
 import numpy as np
 from skimage import color  # , io
-from subprocess import call
-import os
 from preprocessing.reform import saveImages
+from matplotlib import pyplot as plt
 
 # ws = wordSegmenter.segmenter()
 # bcs = baseCharSegmenter.segmenter()
 hs = heuristicSegmenter.segmenter()
 cr = characterRecognizer.recognizer()
-
-from matplotlib import pyplot as plt
 
 
 def generate(image, preprocess=False):
@@ -104,18 +101,14 @@ def heursiticGenerate(image):
         else:
             return False
 
-    def segmentCharacters(line, root):
+    def segmentCharacters(line):
         if len(line.shape) != 2:
             raise ValueError('Expected image with shape (x, y), got ' +
                              str(line.shape))
         characterImages = hs.segment(line)
         middle = findMid(line)
-        print('Evaluate::segmentCharacters::shape ', line.shape)
-        print('Evaluate::segmentCharacters::middle ', middle)
-        superFlag = [isSuper(char, middle) for char in characterImages]
-        subFlag = [isSub(char, middle) for char in characterImages]
-        print('Evaluate::segmentCharacters::flags \n',
-              'superFlag:\t', superFlag, '\n', 'subFlag:\t', subFlag)
+        superFlag = [isSuper(char, middle) for char in characterImages]  # exp
+        subFlag = [isSub(char, middle) for char in characterImages]  # index
         characterImages = [reform.removeEdge(char)
                            for char in characterImages]
         characterImages = [reform.resize(
@@ -123,49 +116,39 @@ def heursiticGenerate(image):
                            for char in characterImages]
         characterImages = [reform.binarize(char, mode='greater')
                            for char in characterImages]
-        print('Evaluate::segmentCharacters::char_imgs')
-        for char in characterImages:
-            plt.imshow(char, cmap='gray')
-            plt.show()
+        # for char in characterImages:
+        #     plt.imshow(char, cmap='gray')
+        #     plt.show()
         characterImages = [char.reshape(char.shape+(1, ))
                            for char in characterImages]
         characterImages = np.array(characterImages, dtype=np.float32)
         characters = cr.predict(characterImages)
         print('Evaluate::segmentCharacters::characters ', characters)
-        item = ET.SubElement(root, 'item', name='letter')
         print('Evaluate::segmentCharacters::length ', len(characters))
+        equation = ''
         for i in range(len(characters)):
             if superFlag[i]:
-                ET.SubElement(item, 'up').text = characters[i]
+                char = '^' + characters[i] + ' '
+                equation += char
                 print('^', characters[i], end='')
             elif subFlag[i]:
-                ET.SubElement(item, 'down').text = characters[i]
+                char = '_' + characters[i] + ' '
+                equation += char
                 print('_', characters[i], end='')
             else:
-                item = ET.SubElement(root, 'item', name='letter')
-                ET.SubElement(item, 'letter').text = characters[i]
+                char = characters[i] + ' '
+                equation += char
                 print(characters[i], end='')
         print('\nEvaluate::segmentCharacters end\n\n')
+        return equation
 
-    if len(image.shape) != 3:
-        raise ValueError('Expected image with shape (x, y, z), got ' +
-                         str(image.shape))
-    plt.imshow(image, cmap='gray')
-    plt.show()
-    image = extractDocument.drawContours(image)
-    print('Document extracted')
-    plt.imshow(image, cmap='gray')
-    plt.show()
-    image = color.rgb2gray(image)
-    plt.imshow(image, cmap='gray')
-    plt.show()
-    image = reform.binarize(image, mode='less', threshold='min')
-    plt.imshow(image, cmap='gray')
-    plt.show()
-    # image = reform.binarize(image, mode='greater')
-    print('Evaluate::After binarization')
-    plt.imshow(image, cmap='gray')
-    plt.show()
+    # if len(image.shape) != 3:
+    #     raise ValueError('Expected image with shape (x, y, z), got ' +
+    #                      str(image.shape))
+    # image = extractDocument.drawContours(image)  # Extract documentation image
+    # image = color.rgb2gray(image)
+    # image = reform.binarize(image, mode='less', threshold='min')
+
     if len(image.shape) != 2:
         raise ValueError('Expected image with shape (x, y), got '
                          + str(image.shape))
@@ -175,19 +158,10 @@ def heursiticGenerate(image):
     for line in lineImages:
         plt.imshow(line, cmap='gray')
         plt.show()
-    root = ET.Element('formula', shelf='math')
+    equations = []
     for line in lineImages:
-        segmentCharacters(line, root)
-    xmlFilename = 'temp.xml'
-    tree = ET.ElementTree(root)
-    tree.write(xmlFilename)
-    converter = toLaTeX.Formula(xmlFilename)
-    # texStr = converter.expection()
-    texFileName = 'texFile.tex'
-    converter.write_tex_file(texFileName)
-    call(['pdflatex', texFileName])
-    with open(os.devnull, 'wb') as dump:
-        call(['./clean.sh'], stdout=dump, stderr=dump)
+        equations.append(segmentCharacters(line))
+    toLaTeX.transoform(equations)
 
 
 if __name__ == '__main__':
