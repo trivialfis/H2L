@@ -61,6 +61,7 @@ def generate(image, preprocess=False):
 
 
 def heursiticGenerate(image):
+    "Generate LaTeX pdf from image using heuristic methods."
 
     def findMid(line):
         if len(line.shape) != 2:

@@ -4,6 +4,9 @@ File:          preprocess.py
 Author:        fis
 Created:       Feb 15 2017
 Last modified: Feb 16 2017
+
+Commentary:
+
 '''
 from preprocessing import words_preprocess as wp
 from preprocessing import lines_preprocess as lp

@@ -1,3 +1,9 @@
+"""
+Author: fis
+Last modified: July 15 2017
+Transforming equations string into LaTeX and pdf file.
+"""
+
 import subprocess
 
 HEAD = "\\documentclass[a4paper, 11pt]{article}\n" + \
@@ -16,4 +22,8 @@ def transoform(equations):
         f.write(temp)
     f.write(TAIL)
     f.close()
-    subprocess.run(['pdflatex', 'result.tex'], stdout=subprocess.PIPE)
+    try:
+        subprocess.run(['pdflatex', 'result.tex'], stdout=subprocess.PIPE)
+    except:
+        print("pdflatex command not found. Please install pdflatex",
+              " and make sure it's in the system path")

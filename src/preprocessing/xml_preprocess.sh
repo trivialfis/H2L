@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Organize those xml files
+
 for prefix in {a..r}
 do
     for i in {1..7}
