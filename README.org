@@ -1,0 +1,20 @@
+#+TITLE: H2L
+
+OCR for handwritten math expression.
+
+* Introduction
+These scripts are build for recognizing handwritten mathematical equations using neural networks. For now, we use convolutional net combined with other traditional techniques to do the trick. For now, only characters recognizer and segmenter are included here. Nothing is working actually.
+
+* What to do
+There is a huge problem when trying to recognize those characters. Although many papers were published to address the image recognition problem, but the performance described in papers and in real life are different. So, here the main task is to tackle the performance issue.
+
+* TODO To-do list for fis: [1/8]
+ + [ ] Add empty column to segmentation point
+ + [X] Clean segmentation points based on probability
+ + [ ] Construct all features
+ + [ ] Better character recognizer
+ + [ ] Characters segmentation check is o shape
+ + [ ] Enhancement for math
+ + [ ] Character data preprocess using feature map
+ + [ ] Combine
+
