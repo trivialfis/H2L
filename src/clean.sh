@@ -1,2 +1,2 @@
 #!/usr/bin/bash
-rm *.aux *.tex *.log *.pdf
+rm *.aux *.tex *.log

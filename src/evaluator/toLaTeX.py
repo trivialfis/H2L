@@ -16,4 +16,4 @@ def transoform(equations):
         f.write(temp)
     f.write(TAIL)
     f.close()
-    subprocess.run(['pdflatex', 'result.tex'])
+    subprocess.run(['pdflatex', 'result.tex'], stdout=subprocess.PIPE)

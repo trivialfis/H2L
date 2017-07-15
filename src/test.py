@@ -143,9 +143,9 @@ def testLineEvaluate():
 
 if __name__ == '__main__':
     try:
-        testLineEvaluate()
+        # testLineEvaluate()
         # testSegmentRecognize()
-        # testHeuristicEvaluate()
+        testHeuristicEvaluate()
         # testRecognizer()
         # testCharSegmenter()
         # testEvaluate()
