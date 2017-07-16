@@ -9,7 +9,7 @@ import subprocess
 HEAD = "\\documentclass[a4paper, 11pt]{article}\n" + \
        "\\usepackage{amsmath, amssymb}\n" + \
        "\\begin{document}"
-TAIL = "\end{document}"
+TAIL = "\n\end{document}"
 EQ_B = "\\begin{equation}\n"
 EQ_E = "\n\\end{equation}\n"
 
