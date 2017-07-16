@@ -25,12 +25,8 @@ def drawContours(img):
         ret, thresh = cv2.threshold(imgray, 150, 155, 0)
         derp, contour, hierarchy = cv2.findContours(thresh, cv2.RETR_EXTERNAL,
                                                     cv2.CHAIN_APPROX_SIMPLE)
-        # print( type(contour))
         contours = list(contour)
-        # print( type(contours))
-        # key = cv2.contourArea
-        # print( type(key))
-        # print(contours)
+
         c = sorted(contours, key=cv2.contourArea, reverse=True)[0]
         rect = cv2.minAreaRect(c)
         box = np.int0(cv2.boxPoints(rect))

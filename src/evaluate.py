@@ -17,6 +17,8 @@ from skimage import filters, color
 from preprocessing.reform import saveImages
 from matplotlib import pyplot as plt
 
+import cv2
+
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -150,16 +152,16 @@ def heursiticGenerate(image):
         raise ValueError('Expected image with shape (x, y, z), got ' +
                          str(image.shape))
     image = extractDocument.drawContours(image)  # Extract documentation image
-    image = filters.gaussian_filter(image, 1)
-    print('image shape after gaussian', image.shape)
-    plt.imshow(image, cmap='gray')
-    plt.show()
-    # image = color.rgb2gray(image)
-    image = image[:, :, 1]
+    # image = filters.gaussian_filter(image, 1)
+    # print('image shape after gaussian', image.shape)
+    # plt.imshow(image, cmap='gray')
+    # plt.show()
+    image = color.rgb2gray(image)
+    # image = image[:, :, 1]
     print('after rgb2gray')
     plt.imshow(image, cmap='gray')
     plt.show()
-    image = reform.binarize(image, mode='less', threshold='min')
+    image = reform.binarize(image, mode='less', threshold='adaptive')
     print('after binarize')
     plt.imshow(image, cmap='gray')
     plt.show()
