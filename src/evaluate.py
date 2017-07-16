@@ -1,10 +1,10 @@
 '''
 File:          evaluate.py
 Author:        fis
-Created:       Feb 17 2017
-Last modified: Mar 22 2017
+Created:       Feb  17 2017
+Last modified: July 17 2017
 '''
-from evaluator import baseCharSegmenter, wordSegmenter, heuristicSegmenter
+from evaluator import heuristicSegmenter, wordSegmenter  # , baseCharSegmenter
 from evaluator import characterRecognizer
 from evaluator import toLaTeX
 from evaluator import extractDocument
@@ -13,11 +13,11 @@ from configuration import characterRecognizerConfig as crconfig
 from preprocessing import reform
 # import xml.etree.ElementTree as ET
 import numpy as np
-from skimage import filters, color
+# from skimage import filters, color
 from preprocessing.reform import saveImages
 from matplotlib import pyplot as plt
 
-import cv2
+# import cv2
 
 import warnings
 warnings.filterwarnings('ignore')
@@ -33,7 +33,7 @@ def generate(image, preprocess=False):
         raise ValueError('Expected image with shape (x, y), got '
                          + str(image.shape))
     image = reform.rescale(image, 64)
-    wordImages = ws.segment(image)
+    wordImages = wordSegmenter.segment(image)
     charactersList = []
     saveImages.counter = 0
     print('Word num ', len(wordImages))
@@ -122,9 +122,6 @@ def heursiticGenerate(image):
                            for char in characterImages]
         characterImages = [reform.binarize(char, mode='greater')
                            for char in characterImages]
-        # for char in characterImages:
-        #     plt.imshow(char, cmap='gray')
-        #     plt.show()
         characterImages = [char.reshape(char.shape+(1, ))
                            for char in characterImages]
         characterImages = np.array(characterImages, dtype=np.float32)
@@ -153,16 +150,7 @@ def heursiticGenerate(image):
                          str(image.shape))
     image = extractDocument.drawContours(image)  # Extract documentation image
     # image = filters.gaussian_filter(image, 1)
-    # print('image shape after gaussian', image.shape)
-    # plt.imshow(image, cmap='gray')
-    # plt.show()
-    image = color.rgb2gray(image)
-    # image = image[:, :, 1]
-    print('after rgb2gray')
-    plt.imshow(image, cmap='gray')
-    plt.show()
-    image = reform.binarize(image, mode='less', threshold='adaptive')
-    print('after binarize')
+    print('after extractDocument', image.shape)
     plt.imshow(image, cmap='gray')
     plt.show()
 

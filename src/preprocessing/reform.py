@@ -76,7 +76,7 @@ def binarize(image, mode=MODE, threshold=THRESHOLD):
     thMapping = {
         'average': lambda image: np.average(image),
         'adaptive': lambda image: filters.threshold_local(image,
-                                                          block_size=233),
+                                                          block_size=7),
         'isodata': lambda image: filters.threshold_isodata(image),
         'otsu': lambda image: filters.threshold_otsu(image),
         'min': lambda image: np.min(image) * 1.7
