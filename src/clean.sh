@@ -1,2 +1,2 @@
-#!/usr/bin/bash
-rm *.aux *.tex *.log
+#!/bin/sh
+rm *.aux *.tex *.log *.png

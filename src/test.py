@@ -1,4 +1,4 @@
-#!/bin/python3
+#!/usr/bin/python3
 from skimage import io
 import numpy as np
 from evaluator import characterRecognizer
@@ -10,7 +10,10 @@ from normalization import slantCorrect
 from evaluate import heursiticGenerate
 
 from matplotlib import pyplot as plt
+from evaluator import h2l_debug
+
 np.set_printoptions(threshold=np.nan)
+h2l_debug.H2L_DEBUG = True
 
 
 def testHeuristicSegmenter():

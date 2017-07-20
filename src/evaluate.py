@@ -12,10 +12,14 @@ from evaluator.LineSegment import LineSegment
 from configuration import characterRecognizerConfig as crconfig
 from preprocessing import reform
 import numpy as np
+
+from evaluator import h2l_debug
 from matplotlib import pyplot as plt
 
 import warnings
 warnings.filterwarnings('ignore')
+
+debuging = h2l_debug.h2l_debuger()
 
 hs = heuristicSegmenter.segmenter()
 cr = characterRecognizer.recognizer()
@@ -108,25 +112,19 @@ def heursiticGenerate(image):
         raise ValueError('Expected image with shape (x, y, z), got ' +
                          str(image.shape))
     image = extractDocument.drawContours(image)  # Extract documentation image
-    # image = filters.gaussian_filter(image, 1)
-    print('after extractDocument', image.shape)
-    plt.imshow(image, cmap='gray')
-    plt.show()
+    debuging.plot(image, "Evaluate::After extractDocument")
+    debuging.save_img(image, "After extractDocument")
 
     if len(image.shape) != 2:
         raise ValueError('Expected image with shape (x, y), got '
                          + str(image.shape))
     lineImages = LineSegment.segment(image)
     lineImages = [reform.rescale(line, 64) for line in lineImages]
-    print('Evaluate::After line segmentation')
-    for line in lineImages:
-        plt.imshow(line, cmap='gray')
-        plt.show()
+    debuging.display(
+        "Evaluate:: line images len: ",
+        "\033[38;2;255;185;0m" + str(len(lineImages)) + "\033[0m")
+    debuging.plot(lineImages, 'Evaluate::After line segmentation')
     equations = []
     for line in lineImages:
         equations.append(segmentCharacters(line))
     toLaTeX.transoform(equations)
-
-
-if __name__ == '__main__':
-    heursiticGenerate()
