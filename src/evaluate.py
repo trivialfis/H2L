@@ -119,6 +119,7 @@ def heursiticGenerate(image):
         raise ValueError('Expected image with shape (x, y), got '
                          + str(image.shape))
     lineImages = LineSegment.segment(image)
+    debuging.display(type(lineImages), len(lineImages))
     lineImages = [reform.rescale(line, 64) for line in lineImages]
     debuging.display(
         "Evaluate:: line images len: ",

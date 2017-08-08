@@ -3,19 +3,20 @@ import ConstValue
 import numpy as np
 from skimage import transform
 
+
 def Transform(line_pix):
     slope = __GetSlope(line_pix)
     angle = math.atan(slope)
-    line_pix = transform.rotate(line_pix, angle, resize = True)
+    line_pix = transform.rotate(line_pix, angle, resize=True)
     return line_pix
 
 def __GetSlope(line_pix):
     pix_x = []
     pix_y = []
     for i in range(len(line_pix)):
-	for j in range(len(line_pix[i])):
-	    if(line_pix[i][j] == ConstValue.BLACK):
-		pix_x.append(i)
+        for j in range(len(line_pix[i])):
+            if(line_pix[i][j] == ConstValue.BLACK):
+                pix_x.append(i)
 		pix_y.append(j)
     del pix_x[0]
     del pix_y[0]
