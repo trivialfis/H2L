@@ -32,9 +32,11 @@ Codes are glued together, and since the project is still in experiment phase, th
 * What to do
 There is a huge problem when trying to recognize those characters. Although many papers were published to address the image recognition problem, but the performance described in papers and in real life are different. So, here the main task is to tackle the performance issue.
 
-* TODO To-do list for fis: [1/4]
+* TODO To-do list for fis: [2/6]
  + [X] Clean segmentation points based on probability
- + [ ] A better document extractor.
+ + [X] A better document extractor.
+ + [ ] A better line segmenter
+ + [ ] Morphological Transformations for better data generation.
  + [ ] Better character recognizer
  + [ ] Characters segmentation check for o shape
 
