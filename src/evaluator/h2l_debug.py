@@ -4,7 +4,7 @@ from skimage import io
 H2L_DEBUG = False
 
 
-class h2l_debuger():
+class h2l_debugger():
     def plot(self, images, caption=None):
         if H2L_DEBUG:
             if caption is not None:

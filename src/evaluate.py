@@ -1,25 +1,29 @@
 '''
 File:          evaluate.py
 Author:        fis
-Created:       Feb  17 2017
-Last modified: July 17 2017
+Created:       Feb 17 2017
+Last modified: Aug 09 2017
 '''
 from evaluator import heuristicSegmenter
 from evaluator import characterRecognizer
 from evaluator import toLaTeX
-from evaluator import extractDocument
+from evaluator import crop_image
 from evaluator.LineSegment import LineSegment
+# from evaluator import extractDocument
+
 from configuration import characterRecognizerConfig as crconfig
 from preprocessing import reform
+from normalization import image_binarization
+
 import numpy as np
+from matplotlib import pyplot as plt
 
 from evaluator import h2l_debug
-from matplotlib import pyplot as plt
 
 import warnings
 warnings.filterwarnings('ignore')
 
-debuging = h2l_debug.h2l_debuger()
+debuging = h2l_debug.h2l_debugger()
 
 hs = heuristicSegmenter.segmenter()
 cr = characterRecognizer.recognizer()
@@ -111,10 +115,15 @@ def heursiticGenerate(image):
     if len(image.shape) != 3:
         raise ValueError('Expected image with shape (x, y, z), got ' +
                          str(image.shape))
-    image = extractDocument.drawContours(image)  # Extract documentation image
-    debuging.plot(image, "Evaluate::After extractDocument")
-    debuging.save_img(image, "After extractDocument")
+    # Extract documentation image
+    # image = extractDocument.drawContours(image)
+    # debuging.plot(image, "Evaluate::After extractDocument")
+    # debuging.save_img(image, "After extractDocument")
 
+    image = crop_image.crop_image(image)
+    debuging.plot(image, "Evaluate::After crop_image")
+    debuging.save_img(image, "After crop_image")
+    image = image_binarization.binarize_image(image)
     if len(image.shape) != 2:
         raise ValueError('Expected image with shape (x, y), got '
                          + str(image.shape))

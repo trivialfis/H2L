@@ -8,16 +8,15 @@ These scripts are build for recognizing handwritten mathematical equations using
 * General structure
 Everything begins at the function =heuristicGenerate= in *evaluate.py*.
 ** Steps for generating PDF file:
-1. Extract the document paper using =extractDocument=.
-   1) Gray scale && Binarize && Reduce noise
-   2) Extract
-2. Segment all the lines using =LineSegment=
-3. Segment all the characters in lines using =segmentCharacters=.
+1. Crop the corresponding area of found text with =crop_image=.
+2. Gray scale and binarize with =image_binarization=.
+3. Segment all the lines using =LineSegment=
+4. Segment all the characters in lines using =segmentCharacters=.
    1) Segment characters in a line using =heuristicSegmenter.segmenter=.
    2) Check whether a character is a super script or subscript.
    3) Predict the characters from above segmented character images using =characterRecognizer.recognizer=
    4) Return the resulting equation from the line image.
-4. Translate the equation strings into LaTeX file and call /pdflatex/ to compile.
+5. Translate the equation strings into LaTeX file and call /pdflatex/ to compile.
 
 ** Training the neural networks:
 There are some neural nets in the code, but we only use one of them to do the recognition due to performance issue. I have tried to use similar techniques to do the segmentation, sadly the resulting performance is a disaster. So all the segmentation are implemented with heuristic techniques.
@@ -39,4 +38,5 @@ There is a huge problem when trying to recognize those characters. Although many
  + [ ] Better character recognizer
  + [ ] Characters segmentation check for o shape
 
-#  LocalWords:  Binarize py LaTeX pdflatex convolutional H2L
+#  LocalWords:  Binarize py LaTeX pdflatex convolutional H2L binarize
+#  LocalWords:  binarization

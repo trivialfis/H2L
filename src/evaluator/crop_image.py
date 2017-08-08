@@ -9,7 +9,11 @@ For details on the methodology, see:
 import cv2
 from PIL import Image
 import numpy as np
+from evaluator import h2l_debug
 from scipy.ndimage.filters import rank_filter
+
+
+debugging = h2l_debug.h2l_debugger()
 
 
 def dilate(ary, N, iterations):
@@ -196,7 +200,7 @@ def pad_crop(crop, contours, edges, border_contour, pad_px=15):
         new_crop = crop_in_border(union_crops(crop, this_crop))
         if 0 < int_area < this_area and crop != new_crop:
             # print '%s -> %s' % (str(crop), str(new_crop))
-            print(str(crop), ' -> ', str(new_crop))
+            # print(str(crop), ' -> ', str(new_crop))
             changed = True
             crop = new_crop
 
@@ -255,25 +259,13 @@ def crop_image(image):
 
     crop = find_optimal_components_subset(contours, edges)
     crop = pad_crop(crop, contours, edges, border_contour)
-    print(crop)
+    # print(crop)
 
     # upscale to the original image size.
     crop = [int(x / scale) for x in crop]
-    text_im = orig_im.crop(crop)
+    text_im = np.array(orig_im.crop(crop))
+    debugging.display('Croped image: type: ', type(text_im),
+                      'dtype:', text_im.dtype,
+                      'shape: ', text_im.shape)
+
     return text_im
-    # text_im.save(out_path)
-    # print(path, out_path)
-
-
-# if __name__ == '__main__':
-#     if len(sys.argv) == 2 and '*' in sys.argv[1]:
-#         files = glob.glob(sys.argv[1])
-#         random.shuffle(files)
-#     else:
-#         files = sys.argv[1:]
-
-#     for path in files:
-#         out_path = path.replace('.jpg', '.crop.png')
-#         if os.path.exists(out_path):
-#             continue
-#         process_image(path, out_path)
