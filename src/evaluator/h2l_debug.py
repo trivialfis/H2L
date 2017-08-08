@@ -22,6 +22,12 @@ class h2l_debugger():
     def display(self, *strings):
         print(*strings)
 
+    def image_info(self, prefix, image):
+        print(prefix, '\n',
+              '  type : \033[38;2;255;185;0m',  type(image), '\033[0m\n',
+              '  dtype: \033[38;2;255;185;0m', image.dtype,  '\033[0m\n',
+              '  shape: \033[38;2;255;185;0m', image.shape,  '\033[0m\n')
+
     def log(self, data):
         if H2L_DEBUG:
             with open('h2l.log', 'a') as f:
