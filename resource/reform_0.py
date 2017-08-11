@@ -2,7 +2,7 @@
 File:          transform.py
 Author:        fis
 Created:       Feb 14 2017
-Last modified: Aug 12 2017
+Last modified: Mar 14 2017
 '''
 from skimage import transform, filters
 import numpy as np
@@ -58,7 +58,7 @@ def removeEdge(image):
             return image
 
         result = np.array(image[top: down+1, left: right+1],
-                          dtype=np.uint8)
+                          dtype=np.float32)
         return result
 
     if len(image.shape) != 2:
@@ -106,7 +106,7 @@ def binarize(image, mode=MODE, threshold=THRESHOLD):
 
     value = thMapping[threshold](image)
     mask = modeMapping[mode](image, value)
-    mask = np.array(mask, dtype=np.uint8)
+    mask = np.array(mask, dtype=np.float32)
     return mask
 
 

@@ -23,7 +23,7 @@ class h2l_debugger():
 
     def display(self, *strings):
         for s in strings:
-            print(ORANGE + s, end=RESET)
+            print(ORANGE + str(s), end=RESET)
         print('\n')
 
     def image_info(self, prefix, image):

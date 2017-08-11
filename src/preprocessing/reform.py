@@ -2,17 +2,17 @@
 File:          transform.py
 Author:        fis
 Created:       Feb 14 2017
-Last modified: Mar 14 2017
+Last modified: Aug 12 2017
 '''
-from skimage import transform, filters
+from skimage import transform, filters, io
 import numpy as np
-from skimage import io
+import cv2
 
 MODE = 'less'
 THRESHOLD = 'isodata'
-ROTATE_RANGE = np.pi / 12
-SHEAR_RANGE = np.pi / 12
-ZOOM_RANGE = 0.2
+ROTATE_RANGE = np.pi / 16
+SHEAR_RANGE = np.pi / 16
+ZOOM_RANGE = 0.05
 
 
 def removeEdge(image):
@@ -22,7 +22,7 @@ def removeEdge(image):
         for i in range(length):
             index = -i if reverse else i
             filled = np.sum(image[index, :])
-            if filled <= 1.0:
+            if filled == 0.0:
                 count += 1
             else:
                 break
@@ -33,7 +33,7 @@ def removeEdge(image):
         for i in range(length):
             index = -i if reverse else i
             filled = np.sum(image[:, index])
-            if filled <= 1.0:
+            if filled == 0.0:
                 count += 1
             else:
                 break
@@ -45,13 +45,19 @@ def removeEdge(image):
         left = detectCol(image, width)
         down = height - detectRow(image, height, True)
         right = width - detectCol(image, width, True)
+        print('top: ', top,
+              ' down: ', down,
+              ' left: ', left,
+              ' right: ', right)
         rows = down - top
         cols = right - left
         if rows < height * 0.1 or cols < width * 0.1:
+            print(rows, height*0.2, rows < height*0.2, cols, width*0.2,
+                  cols < width*0.2, 'Return full image')
             return image
 
         result = np.array(image[top: down+1, left: right+1],
-                          dtype=np.float32)
+                          dtype=np.uint8)
         return result
 
     if len(image.shape) != 2:
@@ -62,7 +68,21 @@ def removeEdge(image):
     length = max(image.shape)
     if (height, width) != image.shape:
         image = resize(image, outputShape=(length, length))
+        # print('After resize: ', image.shape)
         image = rescale(image, height)
+    return image
+
+
+def padding(image):
+    if len(image.shape) != 2:
+        raise ValueError('Expected image shape (x, y), got ', image.shape)
+    rows, columns = image.shape
+    paddedImage = np.zeros((rows+16, columns+8), dtype=np.uint8)
+    paddedImage[4:4+rows, 4:4+columns] = image
+    image = resize(paddedImage, outputShape=(rows, columns))
+    # image = cv2.threshold(image, 0, 255,
+    #                       cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
+    # image = binarize(image, mode='greater')
     return image
 
 
@@ -75,11 +95,8 @@ def saveImages(images, prefix=''):
 def binarize(image, mode=MODE, threshold=THRESHOLD):
     thMapping = {
         'average': lambda image: np.average(image),
-        'adaptive': lambda image: filters.threshold_local(image,
-                                                          block_size=7),
         'isodata': lambda image: filters.threshold_isodata(image),
-        'otsu': lambda image: filters.threshold_otsu(image),
-        'min': lambda image: np.min(image) * 1.7
+        'otsu': lambda image: filters.threshold_otsu(image)
     }
     modeMapping = {
         'less': lambda image, value: image < value,
@@ -88,8 +105,7 @@ def binarize(image, mode=MODE, threshold=THRESHOLD):
 
     value = thMapping[threshold](image)
     mask = modeMapping[mode](image, value)
-    mask = np.array(mask, dtype=np.float32)
-
+    mask = np.array(mask, dtype=np.uint8)
     return mask
 
 
@@ -105,18 +121,18 @@ def rescale(image, height, label=None):
 
 
 def resize(image, outputShape=(48, 48)):
-    if len(image.shape) != 2:
-        raise ValueError('Expected image shape (x, y), got ' +
-                         str(image.shape))
     maxInput = max(image.shape)
     maxOutput = max(outputShape)
     resized = np.zeros(outputShape)
     if maxInput > maxOutput:
-        image = transform.rescale(image, maxOutput/maxInput)
-    rows, cols = image.shape
-    rowStart = (outputShape[0] - rows) // 2
-    colStart = (outputShape[1] - cols) // 2
-    resized[rowStart:rowStart+rows, colStart:colStart+cols] = image
+        ratio = maxOutput / maxInput
+        resized = cv2.resize(image, dsize=(0, 0), fx=ratio, fy=ratio)
+        # resized = transform.rescale(image, maxOutput/maxInput)
+    else:
+        rows, cols = image.shape
+        rowStart = (outputShape[0] - rows) // 2
+        colStart = (outputShape[1] - cols) // 2
+        resized[rowStart:rowStart+rows, colStart:colStart+cols] = image
     return resized
 
 
@@ -135,6 +151,8 @@ def doubleColumns(image):
 
 
 def randomRotate(image, angleRange=ROTATE_RANGE, outputNum=1):
+    if len(image.shape) != 2:
+        raise ValueError('Expected image shape (x, y), got ', image.shape)
     rotated = []
     for i in range(outputNum):
         angle = np.random.uniform(-angleRange, angleRange)
@@ -148,10 +166,15 @@ def randomRotate(image, angleRange=ROTATE_RANGE, outputNum=1):
 
 
 def randomShear(image, angleRange=SHEAR_RANGE, outputNum=1):
+    if len(image.shape) != 2:
+        raise ValueError('Expected image shape (x, y), got ', image.shape)
     sheared = []
     for i in range(outputNum):
         angle = np.random.uniform(-angleRange, angleRange)
-        result = transform.warp(image, transform.AffineTransform(shear=angle))
+        result = transform.warp(image,
+                                transform.AffineTransform(
+                                    shear=angle),
+                                mode='constant')
         sheared.append(result)
     if outputNum == 1:
         sheared = sheared[0]
@@ -159,22 +182,21 @@ def randomShear(image, angleRange=SHEAR_RANGE, outputNum=1):
 
 
 def randomZoom(image, ratioRange=ZOOM_RANGE, outputNum=1):
+    if len(image.shape) != 2:
+        raise ValueError('Expected image shape (x, y), got ', image.shape)
     zoomed = []
     for i in range(outputNum):
         ratio = 1 - np.random.uniform(-ratioRange, ratioRange)
-        # print(image.shape)
         rescaled = transform.rescale(image, ratio)
-        # print(rescaled.shape)
-        rows, cols, channel = rescaled.shape
+        rows, cols = rescaled.shape
         startTop = np.abs(rows - image.shape[0]) // 2
         startLeft = np.abs(cols - image.shape[1]) // 2
         if ratio > 1:
             result = rescaled[startTop:startTop+image.shape[0],
-                              startLeft: startLeft+image.shape[1],
-                              :]
+                              startLeft: startLeft+image.shape[1]]
         else:
             result = np.zeros(image.shape)
-            result[startTop:startTop+rows, startLeft:startLeft+cols, :] = rescaled
+            result[startTop:startTop+rows, startLeft:startLeft+cols] = rescaled
         zoomed.append(result)
     if outputNum == 1:
         zoomed = zoomed[0]
@@ -187,10 +209,13 @@ def randomReform(
         binarizing=True, mode=MODE, threshold=THRESHOLD,
         outputNum=1
 ):
+    if len(image.shape) != 2:
+        raise ValueError('Expected image shape (x, y), got ', image.shape)
     if binarizing:
         binarized = binarize(image, mode, threshold)
     else:
         binarized = image
+    binarized = padding(binarized)
     result = []
     for count in range(outputNum):
         if zoomRange is not None:

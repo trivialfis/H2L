@@ -16,7 +16,7 @@ INPUT_SHAPE = (IMG_ROWS, IMG_COLS, 1)
 # Data loader
 TRAIN_DATA = '../resource/characters_pkl/characters'
 VALIDATION_DATA = '../resource/characters_pkl/validation.pkl'
-FILES_COUNT = 6
+FILES_COUNT = 12
 
 
 def modelExists():
