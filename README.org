@@ -26,6 +26,10 @@ Codes for training neural networks are in *trainer* directory, trained models ar
 ** Used model
 For now, we only use the convolutional net for character recognition.
 
+** Used dataset
++ [[http://yann.lecun.com/exdb/mnist/][MNIST]]
++ [[https://www.kaggle.com/xainano/handwrittenmathsymbols][Handwritten math symbols dataset]]
+
 ** Misc
 Codes are glued together, and since the project is still in experiment phase, there are lots of deprecated but not removed code in this repository. These code will be cleaned in the future.
 
@@ -41,4 +45,4 @@ There is a huge problem when trying to recognize those characters. Although many
  + [ ] Characters segmentation check for o shape
 
 #  LocalWords:  Binarize py LaTeX pdflatex convolutional H2L binarize
-#  LocalWords:  binarization
+#  LocalWords:  binarization dataset Mnist IAM

@@ -9,14 +9,12 @@ from evaluator import characterRecognizer
 from evaluator import toLaTeX
 from evaluator import crop_image
 from evaluator.LineSegment import LineSegment
-# from evaluator import extractDocument
 
 from configuration import characterRecognizerConfig as crconfig
 from preprocessing import reform
 from normalization import image_binarization
 
 import numpy as np
-from matplotlib import pyplot as plt
 
 from evaluator import h2l_debug
 

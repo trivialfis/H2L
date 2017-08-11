@@ -92,8 +92,8 @@ if __name__ == '__main__':
     try:
         # testLineEvaluate()
         # testSegmentRecognize()
-        testHeuristicEvaluate()
-        # testRecognizer()
+        # testHeuristicEvaluate()
+        testRecognizer()
         # testHeuristicSegmenter()
         # testLineSegmenter()
         # testExtractDoc()

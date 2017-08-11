@@ -2,6 +2,8 @@ from matplotlib import pyplot as plt
 from skimage import io
 
 H2L_DEBUG = False
+ORANGE = '\033[38;2;255;185;0m'
+RESET = '\033[0m\n'
 
 
 class h2l_debugger():
@@ -20,13 +22,14 @@ class h2l_debugger():
             io.imsave(fname=caption + '.png', arr=image)
 
     def display(self, *strings):
-        print(*strings)
+        for s in strings:
+            print(ORANGE, s, RESET, end=' ')
 
     def image_info(self, prefix, image):
         print(prefix, '\n',
-              '  type : \033[38;2;255;185;0m',  type(image), '\033[0m\n',
-              '  dtype: \033[38;2;255;185;0m', image.dtype,  '\033[0m\n',
-              '  shape: \033[38;2;255;185;0m', image.shape,  '\033[0m\n')
+              '  type : ', ORANGE, type(image), RESET,
+              '  dtype: ', ORANGE, image.dtype, RESET,
+              '  shape: ', ORANGE, image.shape, RESET)
 
     def log(self, data):
         if H2L_DEBUG:

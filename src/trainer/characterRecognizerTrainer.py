@@ -15,7 +15,8 @@ from keras import models
 from keras.models import Model, Sequential
 from keras.callbacks import ModelCheckpoint, LearningRateScheduler
 # from keras.utils.visualize_util import plot
-from data.characters import trainDataLoader, validationDataLoader
+from data.characters import validationDataLoader, symbol_sequence
+# trainDataLoader
 import math
 from configuration import characterRecognizerConfig as config
 
@@ -71,7 +72,14 @@ def sequentialModel():
         padding=((4, 4), (4, 4))
     ))
     model.add(Conv2D(
-        filters=128, kernel_size=(3, 3),
+        filters=64, kernel_size=(5, 5),
+        padding='same',
+        activation='relu',
+        kernel_regularizer=l2(0.01),
+        # activity_regularizer=l2(0.01)
+    ))
+    model.add(Conv2D(
+        filters=64, kernel_size=(3, 3),
         padding='same',
         activation='relu',
         kernel_regularizer=l2(0.01),
@@ -79,7 +87,7 @@ def sequentialModel():
     ))
     model.add(MaxPooling2D(pool_size=(2, 2), padding='same'))
     model.add(Conv2D(
-        filters=64, kernel_size=(5, 5),
+        filters=32, kernel_size=(2, 2),
         padding='valid',
         activation='relu',
         kernel_regularizer=l2(0.01),
@@ -120,8 +128,9 @@ class trainer(object):
         print(config.NAME + ' model compiled')
 
     def train(self):
+        training_sequence = symbol_sequence()
         print(config.NAME + ' configuring validation data')
-        validationImages, validationLabels = validationDataLoader()
+        validation_data = validationDataLoader()
 
         def stepDecay(epoch):
             initialLearningRate = config.INIT_LEARNING_RATE
@@ -143,16 +152,18 @@ class trainer(object):
                 save_weights_only=True
             )
         ]
+
         print('Start training')
         self.model.fit_generator(
-            trainDataLoader(),
+            generator=training_sequence,
             steps_per_epoch=config.SAMPLES_PER_EPOCH // config.BATCH_SIZE,
             epochs=config.EPOCH,
-            verbose=True,
+            verbose=1,
             callbacks=callbacks,
-            validation_data=(validationImages, validationLabels),
-            max_q_size=80,
-            workers=2,
-            pickle_safe=True,
+            validation_data=validation_data,
+            max_queue_size=10,
+            workers=1,          # Not thread safe
+            # multiprocessing may disable the gpu
+            # use_multiprocessing=True,
             initial_epoch=0
         )
