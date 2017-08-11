@@ -3,7 +3,7 @@ from skimage import io
 
 H2L_DEBUG = False
 ORANGE = '\033[38;2;255;185;0m'
-RESET = '\033[0m\n'
+RESET = '\033[0m '
 
 
 class h2l_debugger():
@@ -23,7 +23,8 @@ class h2l_debugger():
 
     def display(self, *strings):
         for s in strings:
-            print(ORANGE, s, RESET, end=' ')
+            print(ORANGE + s, end=RESET)
+        print('\n')
 
     def image_info(self, prefix, image):
         print(prefix, '\n',

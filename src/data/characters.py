@@ -37,7 +37,7 @@ class symbol_sequence(Sequence):
 
     def __getitem__(self, idx):
         if self.file_count == config.FILES_COUNT:
-            self.file_count
+            self.file_count = 0
         if self.batch_count > self.length // config.BATCH_SIZE:
             self.batch_count = 0
             self.__load_file__()

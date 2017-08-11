@@ -9,6 +9,9 @@ import sys
 from keras import models
 import numpy as np
 from configuration import characterRecognizerConfig as config
+from evaluator import h2l_debug
+
+debugger = h2l_debug.h2l_debugger()
 
 
 class recognizer(object):
@@ -17,7 +20,8 @@ class recognizer(object):
             with open(config.ARCHITECTURE_FILE, 'r') as a:
                 self.model = models.model_from_json(a.read())
                 self.model.load_weights(config.WEIGHTS_FILE)
-                print(config.NAME + ' initialized from file')
+                debugger.display('recognizer:\n',
+                                 config.NAME, 'initialized from file.')
             with open(config.CHARACTER_MAP, 'r') as mapFile:
                 mapString = mapFile.read()
                 self.charactersMap = eval(mapString)
