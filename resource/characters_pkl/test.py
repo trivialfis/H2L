@@ -4,12 +4,13 @@ from matplotlib import pyplot as plt
 
 
 def run():
-    with open('./validation.pkl', 'rb') as f:
+    with open('./characters4.pkl', 'rb') as f:
         characters = pickle.load(f)
     images, labels = zip(*characters)
     print(len(images), len(labels))
     for im in images:
         image = im.reshape(im.shape[:-1])
+        print(image.shape)
         plt.imshow(image, cmap='gray')
         plt.show()
 

@@ -7,6 +7,7 @@ Last modified: Mar 14 2017
 from skimage import transform, filters
 import numpy as np
 from skimage import io
+import cv2
 
 MODE = 'less'
 THRESHOLD = 'isodata'
@@ -45,11 +46,15 @@ def removeEdge(image):
         left = detectCol(image, width)
         down = height - detectRow(image, height, True)
         right = width - detectCol(image, width, True)
-        print('top: ', top, ' down: ', down, ' left: ', left, ' right: ', right)
+        print('top: ', top,
+              ' down: ', down,
+              ' left: ', left,
+              ' right: ', right)
         rows = down - top
         cols = right - left
         if rows < height * 0.1 or cols < width * 0.1:
-            print(rows, height*0.2, rows<height*0.2, cols, width*0.2, cols < width*0.2, 'Return full image')
+            print(rows, height*0.2, rows < height*0.2, cols, width*0.2,
+                  cols < width*0.2, 'Return full image')
             return image
 
         result = np.array(image[top: down+1, left: right+1],
@@ -73,10 +78,12 @@ def padding(image):
     if len(image.shape) != 2:
         raise ValueError('Expected image shape (x, y), got ', image.shape)
     rows, columns = image.shape
-    paddedImage = np.zeros((rows+16, columns+8))
+    paddedImage = np.zeros((rows+16, columns+8), dtype=np.uint8)
     paddedImage[4:4+rows, 4:4+columns] = image
     image = resize(paddedImage, outputShape=(rows, columns))
-    image = binarize(image, mode='greater')
+    image = cv2.threshold(image, 0, 255,
+                          cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
+    # image = binarize(image, mode='greater')
     return image
 
 
@@ -119,7 +126,9 @@ def resize(image, outputShape=(48, 48)):
     maxOutput = max(outputShape)
     resized = np.zeros(outputShape)
     if maxInput > maxOutput:
-        resized = transform.rescale(image, maxOutput/maxInput)
+        ratio = maxOutput / maxInput
+        resized = cv2.resize(image, dsize=(0, 0), fx=ratio, fy=ratio)
+        # resized = transform.rescale(image, maxOutput/maxInput)
     else:
         rows, cols = image.shape
         rowStart = (outputShape[0] - rows) // 2
@@ -163,7 +172,10 @@ def randomShear(image, angleRange=SHEAR_RANGE, outputNum=1):
     sheared = []
     for i in range(outputNum):
         angle = np.random.uniform(-angleRange, angleRange)
-        result = transform.warp(image, transform.AffineTransform(shear=angle))
+        result = transform.warp(image,
+                                transform.AffineTransform(
+                                    shear=angle),
+                                mode='constant')
         sheared.append(result)
     if outputNum == 1:
         sheared = sheared[0]
