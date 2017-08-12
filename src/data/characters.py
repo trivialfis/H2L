@@ -9,6 +9,7 @@ from random import shuffle
 import numpy as np
 import os
 from keras.utils import np_utils, Sequence
+from keras.preprocessing import image as Image
 from configuration import characterRecognizerConfig as config
 from evaluator import h2l_debug
 
@@ -74,8 +75,38 @@ class symbol_sequence(Sequence):
 def validationDataLoader():
     with open(config.VALIDATION_DATA, 'rb') as f:
         validationData = pickle.load(f)
-    images, labels = zip(*validationData)
-    images = np.array(images, dtype=np.float32)
-    labels = np.array(labels, dtype=np.float32)
-    labels = np_utils.to_categorical(labels, config.CLASS_NUM)
+        images, labels = zip(*validationData)
+        images = np.array(images, dtype=np.float32)
+        labels = np.array(labels, dtype=np.float32)
+        labels = np_utils.to_categorical(labels, config.CLASS_NUM)
     return (images, labels)
+
+
+def train_flow():
+    train_datagen = Image.ImageDataGenerator(
+        zca_epsilon=None,
+    )
+    flow = train_datagen.flow_from_directory(
+        config.TRAIN_DATA,
+        color_mode='grayscale',
+        target_size=(config.IMG_ROWS, config.IMG_COLS),
+        batch_size=config.BATCH_SIZE
+    )
+    mapping = flow.class_indices
+    mapping = dict((v, k) for k, v in mapping.items())
+    with open(config.CHARACTER_MAP, 'w') as f:
+        f.write(str(mapping))
+    return flow
+
+
+def validation_flow():
+    validation_gen = Image.ImageDataGenerator(
+        zca_epsilon=None,
+    )
+    flow = validation_gen.flow_from_directory(
+        config.VALIDATION_DATA,
+        color_mode='grayscale',
+        target_size=(config.IMG_ROWS, config.IMG_COLS),
+        batch_size=config.VALIDATION_BATCH_SIZE
+    )
+    return flow

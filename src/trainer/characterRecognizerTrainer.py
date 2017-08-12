@@ -2,7 +2,7 @@
 File:          character_recognizer_trainer.py
 Author:        fis
 Created:       19 Jan 2017
-Last modified: 09 Feb 2017
+Last modified: 12 Aug 2017
 
 Description:
 A convolutional network trained to recognize characters
@@ -15,7 +15,8 @@ from keras import models
 from keras.models import Model, Sequential
 from keras.callbacks import ModelCheckpoint, LearningRateScheduler
 # from keras.utils.visualize_util import plot
-from data.characters import validationDataLoader, symbol_sequence
+# from data.characters import validationDataLoader, symbol_sequence
+from data.characters import train_flow, validation_flow
 # trainDataLoader
 import math
 from configuration import characterRecognizerConfig as config
@@ -128,9 +129,9 @@ class trainer(object):
         print(config.NAME + ' model compiled')
 
     def train(self):
-        training_sequence = symbol_sequence()
-        print(config.NAME + ' configuring validation data')
-        validation_data = validationDataLoader()
+        # training_sequence = symbol_sequence()
+        # print(config.NAME + ' configuring validation data')
+        # validation_data = validationDataLoader()
 
         def stepDecay(epoch):
             initialLearningRate = config.INIT_LEARNING_RATE
@@ -155,14 +156,15 @@ class trainer(object):
 
         print('Start training')
         self.model.fit_generator(
-            generator=training_sequence,
+            generator=train_flow(),
             steps_per_epoch=config.SAMPLES_PER_EPOCH // config.BATCH_SIZE,
             epochs=config.EPOCH,
             verbose=1,
             callbacks=callbacks,
-            validation_data=validation_data,
+            validation_data=validation_flow(),
+            validation_steps=config.VALIDATION_STEPS,
             max_queue_size=10,
-            workers=1,          # Not thread safe
+            workers=2,          # Not thread safe
             # multiprocessing may disable the gpu
             # use_multiprocessing=True,
             initial_epoch=0
