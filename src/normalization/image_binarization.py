@@ -5,7 +5,7 @@ from evaluator import h2l_debug
 debugging = h2l_debug.h2l_debugger()
 
 
-def binarize_image(image):
+def binarize3d(image):
     '''
     Binarize IMAGE, return the binarized version.
     '''
@@ -24,3 +24,17 @@ def binarize_image(image):
                       'dtype: ', mask.dtype,
                       'shape: ', mask.shape)
     return mask
+
+
+def binarize2d(image):
+    result = cv2.threshold(
+        image, 0, 255,
+        cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
+    return result
+
+
+def binarize2d_inv(image):
+    result = cv2.threshold(
+        image, 0, 255,
+        cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)[1]
+    return result

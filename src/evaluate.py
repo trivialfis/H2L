@@ -121,12 +121,17 @@ def heursiticGenerate(image):
     image = crop_image.crop_image(image)
     debuging.plot(image, "Evaluate::After crop_image")
     debuging.save_img(image, "After crop_image")
-    image = image_binarization.binarize_image(image)
+    image = image_binarization.binarize3d(image)
+    image = image_binarization.binarize2d_inv(image)
+    debuging.plot(image, "Evaluate: After binarize_image")
     if len(image.shape) != 2:
         raise ValueError('Expected image with shape (x, y), got '
                          + str(image.shape))
     lineImages = LineSegment.segment(image)
     debuging.display(type(lineImages), len(lineImages))
+    for line in lineImages:
+        debuging.display('Evaluate:')
+        debuging.image_info('line', line)
     lineImages = [reform.rescale(line, 64) for line in lineImages]
     debuging.display(
         "Evaluate:: line images len: ",
