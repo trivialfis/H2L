@@ -14,12 +14,16 @@ from keras.optimizers import Adadelta
 from keras import models
 from keras.models import Model, Sequential
 from keras.callbacks import ModelCheckpoint, LearningRateScheduler
-# from keras.utils.visualize_util import plot
-# from data.characters import validationDataLoader, symbol_sequence
+from keras.utils.vis_utils import plot_model
+
 from data.characters import train_flow, validation_flow
-# trainDataLoader
-import math
 from configuration import characterRecognizerConfig as config
+
+from evaluator import h2l_debug
+
+import math
+
+debugger = h2l_debug.h2l_debugger()
 
 
 def branchModel():
@@ -113,25 +117,36 @@ class trainer(object):
             with open(config.ARCHITECTURE_FILE, 'r') as a:
                 self.model = models.model_from_json(a.read())
             self.model.load_weights(config.WEIGHTS_FILE)
-            print(config.NAME + ' initialized from files')
+            debugger.display(config.NAME + ' initialized from file.')
         else:
             # self.model = branchModel()
             self.model = sequentialModel()
             with open(config.ARCHITECTURE_FILE, 'w') as jsonFile:
                 architecture = self.model.to_json()
                 print(architecture, file=jsonFile)
-                # plot(self.model, to_file='model.png')
-                print(config.NAME + ' saved to file')
+                plot_model(self.model, to_file=config.VISUAL_FILE,
+                           show_shapes=True, show_layer_names=True)
+                debugger.display(config.NAME + ' saved to file.')
+
+        self.train_flow = train_flow()
+        mapping = self.train_flow.class_indices
+        mapping = dict((v, k) for k, v in mapping.items())
+        with open(config.CHARACTER_MAP, 'w') as f:
+            f.write(str(mapping))
+        samples_per_epoch = self.train_flow.samples
+        self.steps_per_epoch = samples_per_epoch // config.BATCH_SIZE
+
+        self.validation_flow = validation_flow()
+        validation_samples = self.validation_flow.samples
+        batch_size_validation = config.VALIDATION_BATCH_SIZE
+        self.validation_steps = validation_samples // batch_size_validation
 
         self.model.compile(loss='categorical_crossentropy',
                            optimizer=Adadelta(),
                            metrics=['accuracy'])
-        print(config.NAME + ' model compiled')
+        debugger.display(config.NAME + ' model compiled.')
 
     def train(self):
-        # training_sequence = symbol_sequence()
-        # print(config.NAME + ' configuring validation data')
-        # validation_data = validationDataLoader()
 
         def stepDecay(epoch):
             initialLearningRate = config.INIT_LEARNING_RATE
@@ -140,7 +155,7 @@ class trainer(object):
             lrate = initialLearningRate * math.pow(
                 drop,
                 math.floor((1+epoch)/epochsDrop))
-            print('Learning rate: ', lrate)
+            debugger.display('Learning rate: ', str(lrate))
             return lrate
 
         callbacks = [
@@ -154,15 +169,16 @@ class trainer(object):
             )
         ]
 
-        print('Start training')
+        debugger.display('Start training.')
         self.model.fit_generator(
-            generator=train_flow(),
-            steps_per_epoch=config.SAMPLES_PER_EPOCH // config.BATCH_SIZE,
+            generator=self.train_flow,
+            # steps_per_epoch=config.SAMPLES_PER_EPOCH // config.BATCH_SIZE,
+            steps_per_epoch=self.steps_per_epoch,
             epochs=config.EPOCH,
             verbose=1,
             callbacks=callbacks,
-            validation_data=validation_flow(),
-            validation_steps=config.VALIDATION_STEPS,
+            validation_data=self.validation_flow,
+            validation_steps=self.validation_steps,
             max_queue_size=10,
             workers=2,          # Not thread safe
             # multiprocessing may disable the gpu

@@ -24,7 +24,7 @@ class h2l_debugger():
     def display(self, *strings):
         for s in strings:
             print(ORANGE + str(s), end=RESET)
-        print('\n')
+        print('\n', end='')
 
     def image_info(self, prefix, image):
         print(prefix, '\n',

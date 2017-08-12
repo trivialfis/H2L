@@ -1,8 +1,8 @@
 '''
-File:          dataLoader.py
+File:          characters.py
 Author:        fis
 Created:              2016
-Last modified: 11 Jul 2017
+Last modified: 12 Jul 2017
 '''
 import pickle
 from random import shuffle
