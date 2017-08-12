@@ -1,5 +1,5 @@
 '''
-File:          transform.py
+File:          reform.py
 Author:        fis
 Created:       Feb 14 2017
 Last modified: Aug 12 2017
@@ -10,8 +10,8 @@ import cv2
 
 MODE = 'less'
 THRESHOLD = 'isodata'
-ROTATE_RANGE = np.pi / 16
-SHEAR_RANGE = np.pi / 16
+ROTATE_RANGE = np.pi / 32
+SHEAR_RANGE = np.pi / 32
 ZOOM_RANGE = 0.05
 
 
@@ -157,8 +157,20 @@ def randomRotate(image, angleRange=ROTATE_RANGE, outputNum=1):
     for i in range(outputNum):
         angle = np.random.uniform(-angleRange, angleRange)
         degree = angle * 180 / np.pi
-        result = transform.rotate(image, degree, mode='constant', cval=0,
-                                  resize=False)
+        row, col = image.shape
+        cy, cx = row // 2, col // 2
+        M = cv2.getRotationMatrix2D((cx, cy), degree, 1.0)
+        cos_ = np.abs(M[0, 0])
+        sin_ = np.abs(M[0, 1])
+
+        new_col = int((row * sin_) + (col * cos_))
+        new_row = int((row * cos_) + (col * sin_))
+
+        M[0, 2] += (new_col / 2) - cx
+        M[1, 2] += (new_row / 2) - cy
+        result = cv2.warpAffine(image, M, (new_col, new_row))
+        # result = transform.rotate(image, degree, mode='constant', cval=0,
+        #                           resize=False)
         rotated.append(result)
     if outputNum == 1:
         rotated = rotated[0]
@@ -171,10 +183,14 @@ def randomShear(image, angleRange=SHEAR_RANGE, outputNum=1):
     sheared = []
     for i in range(outputNum):
         angle = np.random.uniform(-angleRange, angleRange)
-        result = transform.warp(image,
-                                transform.AffineTransform(
-                                    shear=angle),
-                                mode='constant')
+        M = np.float32([[1, np.tan(angle), 0],
+                        [np.tan(angle), 1, 0]])
+        result = cv2.warpAffine(image, M, image.shape)
+        # result = transform.warp(image,
+        #                         transform.AffineTransform(
+        #                             shear=angle),
+        #                         mode='constant',
+        #                         preserve_range=True)
         sheared.append(result)
     if outputNum == 1:
         sheared = sheared[0]
@@ -187,7 +203,8 @@ def randomZoom(image, ratioRange=ZOOM_RANGE, outputNum=1):
     zoomed = []
     for i in range(outputNum):
         ratio = 1 - np.random.uniform(-ratioRange, ratioRange)
-        rescaled = transform.rescale(image, ratio)
+        # rescaled = transform.rescale(image, ratio)
+        rescaled = cv2.resize(image, dsize=(0, 0), fx=ratio, fy=ratio)
         rows, cols = rescaled.shape
         startTop = np.abs(rows - image.shape[0]) // 2
         startLeft = np.abs(cols - image.shape[1]) // 2
@@ -234,4 +251,4 @@ def randomReform(
     if outputNum == 1:
         result = result[0]
 
-    return result
+    return result.astype(np.uint8)
