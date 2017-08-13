@@ -1,5 +1,5 @@
 from matplotlib import pyplot as plt
-from skimage import io
+import cv2
 
 H2L_DEBUG = False
 ORANGE = '\033[38;2;255;185;0m'
@@ -19,7 +19,7 @@ class h2l_debugger():
 
     def save_img(self, image, caption):
         if H2L_DEBUG:
-            io.imsave(fname=caption + '.png', arr=image)
+            cv2.imwrite(filename=caption + '.png', img=image)
 
     def display(self, *strings):
         for s in strings:

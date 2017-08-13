@@ -47,8 +47,12 @@ def testRecognizer():
 
 def testLineSegmenter():
     from evaluator.LineSegment import LineSegment
-    imageFile = '../resource/test/line1.png'
+    imageFile = '../resource/test/line2.png'
     image = cv2.imread(imageFile, 0)
+    image = cv2.threshold(
+        image, 0, 255,
+        cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU
+    )[1]
     result = LineSegment.segment(image)
     debugger.display('Number of lines:', len(result))
     count = 0

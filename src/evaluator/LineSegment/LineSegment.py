@@ -2,6 +2,8 @@ import numpy as np
 from skimage import filters, exposure
 from evaluator import h2l_debug
 
+STRIP_RATIO = 0.3
+
 debugger = h2l_debug.h2l_debugger()
 
 
@@ -40,9 +42,9 @@ def track(image, start_rows):
     for path in paths:
         col = 0
         for row in path:
-            temp[row-2:row+2, col] = 255
+            temp[row-1:row+2, col] = 255
             col += 1
-    debugger.plot(temp, 'segmented')
+    debugger.save_img(temp, 'Segmented image')
     return paths
 
 
@@ -52,7 +54,8 @@ def segment(image):
         raise ValueError('Expected image with shape (x, y), got ' +
                          str(image.shape))
 
-    his = np.dot(image, np.ones(shape=(image.shape[1], 1)))
+    start_strip = image[:, :int(image.shape[1]*STRIP_RATIO)]
+    his = np.dot(start_strip, np.ones(shape=(start_strip.shape[1], 1)))
     value = filters.threshold_otsu(his)
     guessed_seg = his < value
 
@@ -69,8 +72,8 @@ def segment(image):
         index += 1
     if 0 not in start_rows:
         start_rows.insert(0, 0)
-    if image.shape[1] not in start_rows:
-        start_rows.append(image.shape[1] - 1)
+    if image.shape[0] - 1 not in start_rows:
+        start_rows.append(image.shape[0] - 1)
 
     paths = track(image, start_rows)
     if len(paths) == 0:
@@ -80,19 +83,28 @@ def segment(image):
     for i in range(len(paths) - 1):
         upper_bound = min(paths[i])
         lower_bound = max(paths[i+1])
-        distance = lower_bound - upper_bound
-        line = np.zeros((distance, image.shape[1]))
+        height = lower_bound - upper_bound
+        line = np.zeros((height, image.shape[1]))
         for j in range(len(paths[i]) - 1):
             upper = paths[i][j]
             lower = paths[i+1][j]
+            distance = lower - upper
+            if distance < 0:
+                raise ValueError('Distance between paths is negative.')
             if lower < upper:
                 lower = upper + 2
             delta = upper - upper_bound
             try:
-                line[delta:delta+lower-upper, j] = image[upper:lower, j]
-            except ValueError:
-                debugger.display('segment: path: ', i)
+                line[delta:delta+distance, j] = image[upper:lower, j]
+            except ValueError as e:
+                debugger.display('Error:', e)
+                debugger.display('delta:', delta, 'dlu:', delta+distance,
+                                 'upper:', upper, 'lower:', lower)
+                debugger.display('line shape:',
+                                 line[delta:delta+distance].shape,
+                                 'image shape:',
+                                 image[upper:lower].shape)
+                debugger.display('Ori image shape', image.shape)
         if not exposure.is_low_contrast(line):
             extracted_lines.append(line)
-    debugger.plot(images=extracted_lines)
     return extracted_lines
