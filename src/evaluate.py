@@ -113,17 +113,11 @@ def heursiticGenerate(image):
     if len(image.shape) != 3:
         raise ValueError('Expected image with shape (x, y, z), got ' +
                          str(image.shape))
-    # Extract documentation image
-    # image = extractDocument.drawContours(image)
-    # debuging.plot(image, "Evaluate::After extractDocument")
-    # debuging.save_img(image, "After extractDocument")
 
     image = crop_image.crop_image(image)
-    debuging.plot(image, "Evaluate::After crop_image")
-    debuging.save_img(image, "After crop_image")
     image = image_binarization.binarize3d(image)
     image = image_binarization.binarize2d_inv(image)
-    debuging.plot(image, "Evaluate: After binarize_image")
+    debuging.plot(image, 'binarize')
     if len(image.shape) != 2:
         raise ValueError('Expected image with shape (x, y), got '
                          + str(image.shape))
@@ -136,7 +130,6 @@ def heursiticGenerate(image):
     debuging.display(
         "Evaluate:: line images len: ",
         "\033[38;2;255;185;0m" + str(len(lineImages)) + "\033[0m")
-    debuging.plot(lineImages, 'Evaluate::After line segmentation')
     equations = []
     for line in lineImages:
         equations.append(segmentCharacters(line))
