@@ -13,7 +13,7 @@ from evaluator import h2l_debug
 from scipy.ndimage.filters import rank_filter
 
 
-debugging = h2l_debug.h2l_debugger()
+debugger = h2l_debug.h2l_debugger()
 
 
 def dilate(ary, N, iterations):
@@ -226,7 +226,7 @@ def downscale_image(im, max_dim=2048):
 
 def crop_image(image):
     '''Crop the IMAGE, and return the croped version.'''
-    # orig_im = Image.open(path)
+
     orig_im = Image.fromarray(image)
     scale, im = downscale_image(orig_im)
 
@@ -252,17 +252,12 @@ def crop_image(image):
     edges = 255 * (debordered > 0).astype(np.uint8)
 
     contours = find_components(edges)
-    # if len(contours) == 0:
-    #     # print '%s -> (no text!)' % path
-    #     print(path, " -> no text!")
-    #     return
 
     crop = find_optimal_components_subset(contours, edges)
     crop = pad_crop(crop, contours, edges, border_contour)
-    # print(crop)
 
     # upscale to the original image size.
     crop = [int(x / scale) for x in crop]
     text_im = np.array(orig_im.crop(crop))
-    debugging.image_info('Croped image', text_im)
+    debugger.image_info('Croped image', text_im)
     return text_im

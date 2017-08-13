@@ -104,8 +104,12 @@ if __name__ == '__main__':
                 'he': testHeuristicEvaluate}
     try:
         try:
-            args_map[sys.argv[1]]()
+            action = sys.argv[1]
         except IndexError:
+            print('Usage: ./test.py <action>')
+        try:
+            args_map[sys.argv[1]]()
+        except KeyError:
             print('Available tests:\n',
                   'ls: testLineSegmenter\n',
                   'he: testHeuristicEvaluate\n')

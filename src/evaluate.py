@@ -65,7 +65,7 @@ def heursiticGenerate(image):
         for i in range(character.shape[0]):
             if np.max(character[i, :]) != 0:
                 top = i
-                print('Top: ', top)
+                # print('Top: ', top)
                 break
         if top > middle:
             return True
@@ -117,16 +117,19 @@ def heursiticGenerate(image):
     image = crop_image.crop_image(image)
     image = image_binarization.binarize3d(image)
     image = image_binarization.binarize2d_inv(image)
-    debuging.plot(image, 'binarize')
-    debuging.save_img(image, 'binarized.png')
+    debuging.save_img(image, 'binarized')
     if len(image.shape) != 2:
         raise ValueError('Expected image with shape (x, y), got '
                          + str(image.shape))
     lineImages = LineSegment.segment(image)
     debuging.display(type(lineImages), len(lineImages))
+    line_count = 0
     for line in lineImages:
         debuging.display('Evaluate:')
         debuging.image_info('line', line)
+        debuging.display('Max value: ', np.max(line))
+        debuging.save_img(line, 'line_' + str(line_count))
+        line_count += 1
     lineImages = [reform.rescale(line, 64) for line in lineImages]
     debuging.display(
         "Evaluate:: line images len: ",
