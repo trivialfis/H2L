@@ -85,7 +85,6 @@ def segment(image):
         for j in range(len(paths[i]) - 1):
             upper = paths[i][j]
             lower = paths[i+1][j]
-            debugger.display('segment: ', upper, lower)
             if lower < upper:
                 lower = upper + 2
             delta = upper - upper_bound

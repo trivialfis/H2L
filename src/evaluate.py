@@ -118,6 +118,7 @@ def heursiticGenerate(image):
     image = image_binarization.binarize3d(image)
     image = image_binarization.binarize2d_inv(image)
     debuging.plot(image, 'binarize')
+    debuging.save_img(image, 'binarized.png')
     if len(image.shape) != 2:
         raise ValueError('Expected image with shape (x, y), got '
                          + str(image.shape))

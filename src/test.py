@@ -1,22 +1,20 @@
 #!/usr/bin/python3
 from skimage import io
+import cv2
 import numpy as np
-from evaluator import characterRecognizer
-from evaluator import heuristicSegmenter
-from evaluator import extractDocument
-from evaluator.LineSegment import LineSegment
 from preprocessing import reform
 from normalization import slantCorrect
-from evaluate import heursiticGenerate
 
 from matplotlib import pyplot as plt
 from evaluator import h2l_debug
 
 np.set_printoptions(threshold=np.nan)
 h2l_debug.H2L_DEBUG = True
+debugger = h2l_debug.h2l_debugger()
 
 
 def testHeuristicSegmenter():
+    from evaluator import heuristicSegmenter
     imageFile = '../resource/word_test_image.png'
     image = io.imread(imageFile)
     image = reform.binarize(image, mode='less', threshold='isodata')
@@ -30,6 +28,7 @@ def testHeuristicSegmenter():
 
 
 def testHeuristicEvaluate():
+    from evaluate import heursiticGenerate
     imageFile = '../resource/test/testform.jpg'
     image = io.imread(imageFile)
     result = heursiticGenerate(image)
@@ -37,6 +36,7 @@ def testHeuristicEvaluate():
 
 
 def testRecognizer():
+    from evaluator import characterRecognizer
     imageFile = '../resource/test/character.png'
     image = io.imread(imageFile)
     image = image.reshape((1, ) + image.shape + (1, ))
@@ -46,17 +46,19 @@ def testRecognizer():
 
 
 def testLineSegmenter():
-    imageFile = '../resource/test/character.png'
-    image = io.imread(imageFile)
-    image = reform.binarize(image, mode='greater', threshold='isodata')
-    result = LineSegment.LineSegment(image)
-    print(len(result))
+    from evaluator.LineSegment import LineSegment
+    imageFile = '../resource/test/line1.png'
+    image = cv2.imread(imageFile, 0)
+    result = LineSegment.segment(image)
+    debugger.display('Number of lines:', len(result))
     count = 0
     for img in result:
-        io.imsave(arr=img, fname='ls' + str(count) + '.png')
+        cv2.imwrite(img=img, filename='line_segment' + str(count) + '.png')
+        count += 1
 
 
 def testExtractDoc():
+    from evaluator import extractDocument
     imageFile = '../resource/test/testform.jpg'
     image = io.imread(imageFile)
     result = extractDocument.drawContours(image)
@@ -65,6 +67,8 @@ def testExtractDoc():
 
 
 def testSegmentRecognize():
+    from evaluator import characterRecognizer
+    from evaluator import heuristicSegmenter
     imageFile = '../resource/test/word_test_image.png'
     image = io.imread(imageFile)
     image = reform.binarize(image, mode='greater')
@@ -82,6 +86,7 @@ def testSegmentRecognize():
 
 
 def testLineEvaluate():
+    from evaluate import heursiticGenerate
     imageFile = '../resource/test/word_test_image.png'
     image = io.imread(imageFile)
     image = reform.binarize(image, mode='greater')
@@ -92,10 +97,10 @@ if __name__ == '__main__':
     try:
         # testLineEvaluate()
         # testSegmentRecognize()
-        testHeuristicEvaluate()
+        # testHeuristicEvaluate()
         # testRecognizer()
         # testHeuristicSegmenter()
-        # testLineSegmenter()
+        testLineSegmenter()
         # testExtractDoc()
     except KeyboardInterrupt:
         print('\nExit')
