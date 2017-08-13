@@ -8,6 +8,8 @@ from normalization import slantCorrect
 from matplotlib import pyplot as plt
 from evaluator import h2l_debug
 
+import sys
+
 np.set_printoptions(threshold=np.nan)
 h2l_debug.H2L_DEBUG = True
 debugger = h2l_debug.h2l_debugger()
@@ -98,13 +100,21 @@ def testLineEvaluate():
 
 
 if __name__ == '__main__':
+    args_map = {'ls': testLineSegmenter,
+                'he': testHeuristicEvaluate}
     try:
+        try:
+            args_map[sys.argv[1]]()
+        except IndexError:
+            print('Available tests:\n',
+                  'ls: testLineSegmenter\n',
+                  'he: testHeuristicEvaluate\n')
         # testLineEvaluate()
         # testSegmentRecognize()
         # testHeuristicEvaluate()
         # testRecognizer()
         # testHeuristicSegmenter()
-        testLineSegmenter()
+        # testLineSegmenter()
         # testExtractDoc()
     except KeyboardInterrupt:
         print('\nExit')
