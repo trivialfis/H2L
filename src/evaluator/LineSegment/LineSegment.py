@@ -35,7 +35,7 @@ def track(image, start_rows):
                 considered_row = current_row + i
                 piece = image[considered_row - RANGE: considered_row + RANGE,
                               col: col+image.shape[1]//5]
-                              # col:]
+                # col:]
                 cost = 4 * np.sum(piece)
                 cost += np.abs(considered_row - current_row)
                 # cost += 2 * np.abs(considered_row - start_row)

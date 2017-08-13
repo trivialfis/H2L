@@ -45,10 +45,6 @@ def removeEdge(image):
         left = detectCol(image, width)
         down = height - detectRow(image, height, True)
         right = width - detectCol(image, width, True)
-        print('top: ', top,
-              ' down: ', down,
-              ' left: ', left,
-              ' right: ', right)
         rows = down - top
         cols = right - left
         if rows < height * 0.1 or cols < width * 0.1:

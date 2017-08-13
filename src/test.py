@@ -107,8 +107,9 @@ if __name__ == '__main__':
             action = sys.argv[1]
         except IndexError:
             print('Usage: ./test.py <action>')
+            sys.exit(1)
         try:
-            args_map[sys.argv[1]]()
+            args_map[action]()
         except KeyError:
             print('Available tests:\n',
                   'ls: testLineSegmenter\n',

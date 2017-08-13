@@ -2,7 +2,7 @@
 File:          evaluate.py
 Author:        fis
 Created:       Feb 17 2017
-Last modified: Aug 09 2017
+Last modified: Aug 14 2017
 '''
 from evaluator import heuristicSegmenter
 from evaluator import characterRecognizer
