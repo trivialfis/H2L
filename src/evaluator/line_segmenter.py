@@ -125,7 +125,6 @@ def segment(image):
     if len(image.shape) != 2:
         raise ValueError('Expected image with shape (x, y), got ' +
                          str(image.shape))
-    debugger.image_info('line segment', image)
     padded = padding(image)
     start_strip = padded[:, :int(padded.shape[1]*STRIP_RATIO)]
     his = np.dot(start_strip, np.ones(shape=(start_strip.shape[1], 1)))

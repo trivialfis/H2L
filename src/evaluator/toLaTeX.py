@@ -1,6 +1,6 @@
 """
 Author: fis
-Last modified: July 15 2017
+Last modified: Aug 15 2017
 Transforming equations string into LaTeX and pdf file.
 """
 
@@ -24,6 +24,8 @@ def transoform(equations):
     f.close()
     try:
         subprocess.run(['pdflatex', 'result.tex'], stdout=subprocess.PIPE)
+    except KeyboardInterrupt:
+        print('Interrupted')
     except:
         print("pdflatex command not found. Please install pdflatex",
               " and make sure it's in the system path")

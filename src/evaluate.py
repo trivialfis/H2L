@@ -8,7 +8,7 @@ from evaluator import heuristicSegmenter
 from evaluator import characterRecognizer
 from evaluator import toLaTeX
 from evaluator import crop_image
-from evaluator.LineSegment import LineSegment
+from evaluator import line_segmenter
 
 from configuration import characterRecognizerConfig as crconfig
 from preprocessing import reform
@@ -75,9 +75,6 @@ def heursiticGenerate(image):
     def is_symbol(character):
         result = len(character) > 2 and character[0] != '^' \
                                                         and character[0] != '_'
-        if result:
-            debuging.display('len of character: ', len(character))
-            debuging.display('>2: ', character, ';')
         return result
 
     def segmentCharacters(line):
@@ -121,20 +118,16 @@ def heursiticGenerate(image):
         for i in range(len(characters)):
             if superFlag[i]:
                 char = '^' + characters[i] + ' '
-                print('^', characters[i], end='')
             elif subFlag[i]:
                 char = '_' + characters[i] + ' '
-                print('_', characters[i], end='')
             else:
                 char = characters[i] + ' '
-                print(characters[i], end='')
             if is_symbol(char):
                 symbol = '\\' + char
-                debuging.display('symbol:', symbol)
             else:
                 symbol = char
             equation += symbol
-        print('\nEvaluate::segmentCharacters end\n\n')
+        debuging.display('\nEvaluate::segmentCharacters end\n\n')
         return equation
 
     if len(image.shape) != 3:
@@ -148,18 +141,14 @@ def heursiticGenerate(image):
     if len(image.shape) != 2:
         raise ValueError('Expected image with shape (x, y), got '
                          + str(image.shape))
-    lineImages = LineSegment.segment(image)
-    debuging.display(type(lineImages), len(lineImages))
+    lineImages = line_segmenter.segment(image)
     line_count = 0
     for line in lineImages:
-        debuging.display('Evaluate:')
-        debuging.image_info('line', line)
-        debuging.display('Max value: ', np.max(line))
         debuging.save_img(line, 'line_' + str(line_count))
         line_count += 1
     lineImages = [reform.rescale(line, 64) for line in lineImages]
     debuging.display(
-        "Evaluate:: line images len: ",
+        "Evaluate:: Number of line images: ",
         "\033[38;2;255;185;0m" + str(len(lineImages)) + "\033[0m")
     equations = []
     for line in lineImages:

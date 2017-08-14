@@ -22,7 +22,7 @@ class segmenter(object):
             character = np.zeros((HEIGHT, HEIGHT))
             rows, cols = image.shape
             length = segmentationPoints[i] - segmentationPoints[lastPoint]
-            # print('length: ', length)
+
             if length <= 0:
                 raise ValueError(
                     'Negative length, sp[i]:'+str(
@@ -53,7 +53,6 @@ class segmenter(object):
     def segment(self, image):
         if len(image.shape) != 2:
             raise ValueError('expected image shape (x, y), got ', image.shape)
-        print('image shape ', image.shape)
         height, width = image.shape
         if width <= height*0.2:
             return []
@@ -69,8 +68,7 @@ class segmenter(object):
                 i = j
                 segmentationPoints.append(mid)
             i += 1
-        debugger.display('Heuristic Segmenter: segmentationPoints: ',
-                         segmentationPoints)
+
         characterList = self.__extractCharacters(image,
                                                  segmentationPoints,
                                                  HEIGHT=height)
