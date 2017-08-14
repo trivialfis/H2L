@@ -259,5 +259,5 @@ def crop_image(image):
     # upscale to the original image size.
     crop = [int(x / scale) for x in crop]
     text_im = np.array(orig_im.crop(crop))
-    debugger.image_info('Croped image', text_im)
+
     return text_im

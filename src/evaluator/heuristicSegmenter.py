@@ -2,10 +2,14 @@
 File:          heuristic_segmenter.py
 Author:        fis
 Created:       Feb 22 2017
-Last modified: Mar 15 2017
+Last modified: Aug 15 2017
 '''
 import numpy as np
 from skimage import transform
+from evaluator import h2l_debug
+
+
+debugger = h2l_debug.h2l_debugger()
 
 
 class segmenter(object):
@@ -56,7 +60,6 @@ class segmenter(object):
         i = 0
         segmentationPoints = []
         while i < width:
-            # print('sum: ', np.sum(image[:, 1]))
             if np.sum(image[:, i]) < 1.0:
                 j = i + 1
                 # the j < width run before sum is important
@@ -66,7 +69,8 @@ class segmenter(object):
                 i = j
                 segmentationPoints.append(mid)
             i += 1
-        print(segmentationPoints)
+        debugger.display('Heuristic Segmenter: segmentationPoints: ',
+                         segmentationPoints)
         characterList = self.__extractCharacters(image,
                                                  segmentationPoints,
                                                  HEIGHT=height)

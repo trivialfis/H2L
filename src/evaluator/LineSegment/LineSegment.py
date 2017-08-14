@@ -72,9 +72,6 @@ def extract_images(image, paths):
         lower_bound = max(path)
         height = lower_bound - upper_bound
         if height <= 0:
-            debugger.display('height <= 0\n',
-                             ' lower_bound:', lower_bound,
-                             ' upper_bound:', upper_bound)
             continue
         line = np.zeros((height, image.shape[1]))
         status = True

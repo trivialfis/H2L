@@ -12,7 +12,7 @@ from evaluator.LineSegment import LineSegment
 
 from configuration import characterRecognizerConfig as crconfig
 from preprocessing import reform
-from normalization import image_binarization
+from normalization import image_utils
 
 import numpy as np
 
@@ -80,19 +80,35 @@ def heursiticGenerate(image):
         middle = findMid(line)
         superFlag = [isSuper(char, middle) for char in characterImages]  # exp
         subFlag = [isSub(char, middle) for char in characterImages]  # index
-        characterImages = [reform.removeEdge(char)
+        count = 0
+        for c in characterImages:
+            debuging.save_img(c, caption='segmented'+str(count))
+            count += 1
+        characterImages = [image_utils.remove_edges(char)
                            for char in characterImages]
-        characterImages = [reform.resize(
-            char, (crconfig.IMG_ROWS, crconfig.IMG_COLS))
-                           for char in characterImages]
-        characterImages = [reform.binarize(char, mode='greater')
-                           for char in characterImages]
+        count = 0
+        for c in characterImages:
+            debuging.save_img(c, caption='edge-removed'+str(count))
+            count += 1
+        characterImages = [
+            image_utils.fill_to_size(
+                char,
+                (crconfig.IMG_ROWS, crconfig.IMG_COLS)
+            )
+            for char in characterImages
+        ]
+        count = 0
+        for c in characterImages:
+            debuging.save_img(c, caption='resized'+str(count))
+            count += 1
         characterImages = [char.reshape(char.shape+(1, ))
                            for char in characterImages]
         characterImages = np.array(characterImages, dtype=np.float32)
         characters = cr.predict(characterImages)
-        print('Evaluate::segmentCharacters::characters ', characters)
-        print('Evaluate::segmentCharacters::length ', len(characters))
+        debuging.display('Evaluate::segmentCharacters::characters ',
+                         characters)
+        debuging.display('Evaluate::segmentCharacters::length ',
+                         len(characters))
         equation = ''
         for i in range(len(characters)):
             if superFlag[i]:
@@ -115,8 +131,8 @@ def heursiticGenerate(image):
                          str(image.shape))
 
     image = crop_image.crop_image(image)
-    image = image_binarization.binarize3d(image)
-    image = image_binarization.binarize2d_inv(image)
+    image = image_utils.binarize3d(image)
+    image = image_utils.binarize2d_inv(image)
     debuging.save_img(image, 'binarized')
     if len(image.shape) != 2:
         raise ValueError('Expected image with shape (x, y), got '

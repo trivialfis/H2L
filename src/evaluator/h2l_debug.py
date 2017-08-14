@@ -1,9 +1,14 @@
 from matplotlib import pyplot as plt
 import cv2
+import os
 
 H2L_DEBUG = False
 ORANGE = '\033[38;2;255;185;0m'
 RESET = '\033[0m '
+DUMP_FOLDER = '../../dump'
+
+if not os.path.exists(DUMP_FOLDER):
+    os.mkdir(DUMP_FOLDER)
 
 
 class h2l_debugger():
@@ -19,7 +24,8 @@ class h2l_debugger():
 
     def save_img(self, image, caption):
         if H2L_DEBUG:
-            cv2.imwrite(filename=caption + '.png', img=image)
+            cv2.imwrite(filename=os.path.join(DUMP_FOLDER, caption + '.png'),
+                        img=image)
 
     def display(self, *strings):
         for s in strings:

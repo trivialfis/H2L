@@ -7,6 +7,10 @@ Last modified: Aug 12 2017
 from skimage import transform, filters, io
 import numpy as np
 import cv2
+from evaluator import h2l_debug
+
+debugger = h2l_debug.h2l_debugger()
+
 
 MODE = 'less'
 THRESHOLD = 'isodata'
@@ -20,9 +24,9 @@ def removeEdge(image):
     def detectRow(image, length, reverse=False):
         count = 0
         for i in range(length):
-            index = -i if reverse else i
+            index = -i-1 if reverse else i
             filled = np.sum(image[index, :])
-            if filled == 0.0:
+            if filled < 1:
                 count += 1
             else:
                 break
@@ -31,9 +35,9 @@ def removeEdge(image):
     def detectCol(image, length, reverse=False):
         count = 0
         for i in range(length):
-            index = -i if reverse else i
+            index = -i-1 if reverse else i
             filled = np.sum(image[:, index])
-            if filled == 0.0:
+            if filled < 1:
                 count += 1
             else:
                 break
@@ -47,9 +51,13 @@ def removeEdge(image):
         right = width - detectCol(image, width, True)
         rows = down - top
         cols = right - left
+        debugger.plot(image)
+        debugger.display('left:', left, 'right:', right,
+                         'top:', top, 'down:', down)
         if rows < height * 0.1 or cols < width * 0.1:
             print(rows, height*0.2, rows < height*0.2, cols, width*0.2,
                   cols < width*0.2, 'Return full image')
+            debugger.plot(image, caption='full_image')
             return image
 
         result = np.array(image[top: down+1, left: right+1],
