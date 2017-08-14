@@ -72,6 +72,14 @@ def heursiticGenerate(image):
         else:
             return False
 
+    def is_symbol(character):
+        result = len(character) > 2 and character[0] != '^' \
+                                                        and character[0] != '_'
+        if result:
+            debuging.display('len of character: ', len(character))
+            debuging.display('>2: ', character, ';')
+        return result
+
     def segmentCharacters(line):
         if len(line.shape) != 2:
             raise ValueError('Expected image with shape (x, y), got ' +
@@ -113,16 +121,19 @@ def heursiticGenerate(image):
         for i in range(len(characters)):
             if superFlag[i]:
                 char = '^' + characters[i] + ' '
-                equation += char
                 print('^', characters[i], end='')
             elif subFlag[i]:
                 char = '_' + characters[i] + ' '
-                equation += char
                 print('_', characters[i], end='')
             else:
                 char = characters[i] + ' '
-                equation += char
                 print(characters[i], end='')
+            if is_symbol(char):
+                symbol = '\\' + char
+                debuging.display('symbol:', symbol)
+            else:
+                symbol = char
+            equation += symbol
         print('\nEvaluate::segmentCharacters end\n\n')
         return equation
 
