@@ -9,19 +9,19 @@ These scripts are build for recognizing handwritten mathematical equations using
 Everything begins at the function =heuristicGenerate= in *evaluate.py*.
 ** Steps for generating PDF file:
 1. Crop the corresponding area of found text with =crop_image=.
-2. Gray scale and binarize with =image_binarization=.
-3. Segment all the lines using =LineSegment=
-4. Segment all the characters in lines using =segmentCharacters=.
-   1) Segment characters in a line using =heuristicSegmenter.segmenter=.
+2. Gray scale and binarize with =binarizeNd=.
+3. Segment all the lines using =line_segmenter.segment=
+4. Construct equation from line images using =build_equation=.
+   1) Segment characters in a line with =heuristicSegmenter.segmenter=.
    2) Check whether a character is a super script or subscript.
-   3) Predict the characters from above segmented character images using =characterRecognizer.recognizer=
+   3) Predict the characters from above segmented character images with =characterRecognizer.recognizer=
    4) Return the resulting equation from the line image.
-5. Translate the equation strings into LaTeX file and call /pdflatex/ to compile.
+5. Translate the equation strings into .tex file and call /pdflatex/ to compile.
 
 ** Training the neural networks:
-There are some neural nets in the code, but we only use one of them to do the recognition due to performance issue. I have tried to use similar techniques to do the segmentation, sadly the resulting performance is a disaster. So all the segmentation are implemented with heuristic techniques.
+Originally, there are some neural nets in the code performing different tasks, but we only use one of them to do the recognition due to their poor performance. At the very first, I have tried to use similar techniques to do the segmentation, sadly the resulting performance is a disaster. So all the segmentation are implemented with heuristic techniques.
 
-Codes for training neural networks are in *trainer* directory, trained models are in *models* directory, configuration for learning parameters are in *configuration* directory, you can use *train.py* to kick the training processes start, just specify the model you wanna train and comment out the others.
+Codes for training neural networks are in *trainer* directory, trained models are in *models* directory, configuration for learning parameters are in *configuration* directory, you can use *train.py* to kick the training processes start.
 
 ** Used model
 For now, we only use the convolutional net for character recognition.
@@ -31,18 +31,18 @@ For now, we only use the convolutional net for character recognition.
 + [[https://www.kaggle.com/xainano/handwrittenmathsymbols][Handwritten math symbols dataset]]
 
 ** Misc
-Codes are glued together, and since the project is still in experiment phase, there are lots of deprecated but not removed code in this repository. These code will be cleaned in the future.
+Codes are glued together, and since the project is still in experiment phase, there are +lots of+ deprecated but not removed code in this repository. These code will be cleaned in the future.
 
 * What to do
-There is a huge problem when trying to recognize those characters. Although many papers were published to address the image recognition problem, but the performance described in papers and in real life are different. So, here the main task is to tackle the performance issue.
+There is a huge problem when trying to recognize those characters. Although many papers were published to address the image recognition problem, but the performance described in papers and in real life are different. So, here the main task is to tackle the recognition performance issue.
 
-* TODO To-do list for fis: [2/6]
+* TODO To-do list for fis: [3/6]
  + [X] Clean segmentation points based on probability
  + [X] A better document extractor.
- + [ ] A better line segmenter
- + [ ] Morphological Transformations for better data generation.
+ + [X] A better line segmenter.
+ + [ ] Morphological Transformations for better training data generation.
  + [ ] Better character recognizer
  + [ ] Characters segmentation check for o shape
 
 #  LocalWords:  Binarize py LaTeX pdflatex convolutional H2L binarize
-#  LocalWords:  binarization dataset Mnist IAM
+#  LocalWords:  binarization dataset Mnist IAM tex fis segmenter
