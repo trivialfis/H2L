@@ -27,9 +27,7 @@ hs = heuristicSegmenter.segmenter()
 cr = characterRecognizer.recognizer()
 
 
-def heursiticGenerate(image):
-    "Generate LaTeX pdf from image using heuristic methods."
-
+def build_equation(line):
     def findMid(line):
         if len(line.shape) != 2:
             raise ValueError('Expected image with shape (x, y), got ' +
@@ -77,58 +75,61 @@ def heursiticGenerate(image):
                                                         and character[0] != '_'
         return result
 
-    def segmentCharacters(line):
-        if len(line.shape) != 2:
-            raise ValueError('Expected image with shape (x, y), got ' +
-                             str(line.shape))
-        characterImages = hs.segment(line)
-        middle = findMid(line)
-        superFlag = [isSuper(char, middle) for char in characterImages]  # exp
-        subFlag = [isSub(char, middle) for char in characterImages]  # index
-        count = 0
-        for c in characterImages:
-            debuging.save_img(c, caption='segmented'+str(count))
-            count += 1
-        characterImages = [image_utils.remove_edges(char)
-                           for char in characterImages]
-        count = 0
-        for c in characterImages:
-            debuging.save_img(c, caption='edge-removed'+str(count))
-            count += 1
-        characterImages = [
-            image_utils.fill_to_size(
-                char,
-                (crconfig.IMG_ROWS, crconfig.IMG_COLS)
-            )
-            for char in characterImages
-        ]
-        count = 0
-        for c in characterImages:
-            debuging.save_img(c, caption='resized'+str(count))
-            count += 1
-        characterImages = [char.reshape(char.shape+(1, ))
-                           for char in characterImages]
-        characterImages = np.array(characterImages, dtype=np.float32)
-        characters = cr.predict(characterImages)
-        debuging.display('Evaluate::segmentCharacters::characters ',
-                         characters)
-        debuging.display('Evaluate::segmentCharacters::length ',
-                         len(characters))
-        equation = ''
-        for i in range(len(characters)):
-            if superFlag[i]:
-                char = '^' + characters[i] + ' '
-            elif subFlag[i]:
-                char = '_' + characters[i] + ' '
-            else:
-                char = characters[i] + ' '
-            if is_symbol(char):
-                symbol = '\\' + char
-            else:
-                symbol = char
-            equation += symbol
-        debuging.display('\nEvaluate::segmentCharacters end\n\n')
-        return equation
+    if len(line.shape) != 2:
+        raise ValueError('Expected image with shape (x, y), got ' +
+                         str(line.shape))
+    characterImages = hs.segment(line)
+    middle = findMid(line)
+    superFlag = [isSuper(char, middle) for char in characterImages]  # exp
+    subFlag = [isSub(char, middle) for char in characterImages]  # index
+    count = 0
+    for c in characterImages:
+        debuging.save_img(c, caption='segmented'+str(count))
+        count += 1
+    characterImages = [image_utils.remove_edges(char)
+                       for char in characterImages]
+    count = 0
+    for c in characterImages:
+        debuging.save_img(c, caption='edge-removed'+str(count))
+        count += 1
+    characterImages = [
+        image_utils.fill_to_size(
+            char,
+            (crconfig.IMG_ROWS, crconfig.IMG_COLS)
+        )
+        for char in characterImages
+    ]
+    count = 0
+    for c in characterImages:
+        debuging.save_img(c, caption='resized'+str(count))
+        count += 1
+    characterImages = [char.reshape(char.shape+(1, ))
+                       for char in characterImages]
+    characterImages = np.array(characterImages, dtype=np.float32)
+    characters = cr.predict(characterImages)
+    debuging.display('Evaluate::segmentCharacters::characters ',
+                     characters)
+    debuging.display('Evaluate::segmentCharacters::length ',
+                     len(characters))
+    equation = ''
+    for i in range(len(characters)):
+        if superFlag[i]:
+            char = '^' + characters[i] + ' '
+        elif subFlag[i]:
+            char = '_' + characters[i] + ' '
+        else:
+            char = characters[i] + ' '
+        if is_symbol(char):
+            symbol = '\\' + char
+        else:
+            symbol = char
+        equation += symbol
+    debuging.display('\nEvaluate::segmentCharacters end\n\n')
+    return equation
+
+
+def heursiticGenerate(image):
+    "Generate LaTeX pdf from image using heuristic methods."
 
     if len(image.shape) != 3:
         raise ValueError('Expected image with shape (x, y, z), got ' +
@@ -152,5 +153,5 @@ def heursiticGenerate(image):
         "\033[38;2;255;185;0m" + str(len(lineImages)) + "\033[0m")
     equations = []
     for line in lineImages:
-        equations.append(segmentCharacters(line))
+        equations.append(build_equation(line))
     toLaTeX.transoform(equations)
