@@ -147,6 +147,7 @@ def segment(image):
     if image.shape[0] - 1 not in start_rows:
         start_rows.append(image.shape[0] - 1)
 
+    debugger.display('start_rows: ', start_rows)
     paths = track(image, start_rows)
     extracted_lines = extract_images(image, paths)
 

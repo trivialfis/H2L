@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 from skimage import io
+import os
 import cv2
 import numpy as np
 from preprocessing import reform
@@ -45,10 +46,13 @@ def testHeuristicSegmenter():
 
 def testHeuristicEvaluate():
     from evaluate import heursiticGenerate
-    imageFile = '../resource/test/testform.jpg'
-    image = io.imread(imageFile)
-    result = heursiticGenerate(image)
-    print(result)
+    images = [io.imread(os.path.join(root, image))
+              for root, subdirs, files in os.walk('../resource/test/form/')
+              for image in files]
+    for image in images:
+        heursiticGenerate(image)
+        plt.imshow(image)
+        plt.show()
 
 
 def testRecognizer():
@@ -75,6 +79,16 @@ def testLineSegmenter():
     for img in result:
         cv2.imwrite(img=img, filename='line_segment' + str(count) + '.png')
         count += 1
+
+
+def test_character_segmenter():
+    from evaluator import heuristicSegmenter
+    image_file = '../resource/test/characters.png'
+    image = cv2.imread(image_file, 0)
+    characters = heuristicSegmenter.segment(image)
+    for c in characters:
+        plt.imshow(c)
+        plt.show()
 
 
 def testExtractDoc():
@@ -115,10 +129,12 @@ def testLineEvaluate():
 
 if __name__ == '__main__':
     args_map = {'ls': testLineSegmenter,
+                'cs': test_character_segmenter,
                 'he': testHeuristicEvaluate,
                 'soc': test_slope_correction}
     help_message = 'Available tests:\n' + \
                    '\tls: testLineSegmenter\n' + \
+                   'test_character_segmenter\n' + \
                    '\the: testHeuristicEvaluate\n' + \
                    '\tsoc: test_slope_correction\n'
     try:
