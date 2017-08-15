@@ -5,6 +5,7 @@ Transforming equations string into LaTeX and pdf file.
 """
 
 import subprocess
+import os
 
 HEAD = "\\documentclass[a4paper, 11pt]{article}\n" + \
        "\\usepackage{amsmath, amssymb}\n" + \
@@ -15,6 +16,8 @@ EQ_E = "\n\\end{equation}\n"
 
 
 def transoform(equations):
+    if os.path.exists('result.tex'):
+        os.remove('result.tex')
     f = open('result.tex', 'a')
     f.write(HEAD)
     for eq in equations:
