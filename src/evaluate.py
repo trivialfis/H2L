@@ -12,7 +12,7 @@ from evaluator import line_segmenter
 
 from configuration import characterRecognizerConfig as crconfig
 from preprocessing import reform
-from normalization import image_utils
+from normalization import image_utils, slope_correct
 
 import numpy as np
 
@@ -143,6 +143,7 @@ def heursiticGenerate(image):
         raise ValueError('Expected image with shape (x, y), got '
                          + str(image.shape))
     lineImages = line_segmenter.segment(image)
+    lineImages = [slope_correct.correct_slope(line) for line in lineImages]
     line_count = 0
     for line in lineImages:
         debuging.save_img(line, 'line_' + str(line_count))
