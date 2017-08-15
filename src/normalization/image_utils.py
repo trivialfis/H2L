@@ -42,6 +42,24 @@ def binarize2d_inv(image):
     return result
 
 
+def rotate(image, angle):
+    degree = angle * 180 / np.pi
+    row, col = image.shape
+    cy, cx = row // 2, col // 2
+    M = cv2.getRotationMatrix2D((cx, cy), degree, 1.0)
+    cos_ = np.abs(M[0, 0])
+    sin_ = np.abs(M[0, 1])
+
+    new_col = int((row * sin_) + (col * cos_))
+    new_row = int((row * cos_) + (col * sin_))
+
+    M[0, 2] += (new_col / 2) - cx
+    M[1, 2] += (new_row / 2) - cy
+
+    image = cv2.warpAffine(image, M, (new_col, new_row))
+    return image
+
+
 def remove_edges(image):
     '''Remove the white edges of the characters'''
     def detectRow(image, length, reverse=False):

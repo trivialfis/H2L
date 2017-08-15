@@ -15,6 +15,20 @@ h2l_debug.H2L_DEBUG = True
 debugger = h2l_debug.h2l_debugger()
 
 
+def test_slope_correction():
+    from normalization import slope_correct
+    image_file = '../resource/test/slope1.png'
+    image = cv2.imread(image_file, 0)
+    plt.subplot(121)
+    plt.imshow(image, cmap='gray')
+    plt.title('Original')
+    result = slope_correct.correct_slope(image)
+    plt.subplot(122)
+    plt.title('Corrected')
+    plt.imshow(result, cmap='gray')
+    plt.show()
+
+
 def testHeuristicSegmenter():
     from evaluator import heuristicSegmenter
     imageFile = '../resource/word_test_image.png'
@@ -26,7 +40,7 @@ def testHeuristicSegmenter():
     print('points: ', segmentation)
     for p in segmentation:
         image[:, p] = 1
-    io.imsave(arr=image, fname='result.png')
+        io.imsave(arr=image, fname='result.png')
 
 
 def testHeuristicEvaluate():
@@ -101,25 +115,29 @@ def testLineEvaluate():
 
 if __name__ == '__main__':
     args_map = {'ls': testLineSegmenter,
-                'he': testHeuristicEvaluate}
+                'he': testHeuristicEvaluate,
+                'soc': test_slope_correction}
+    help_message = 'Available tests:\n' + \
+                   '\tls: testLineSegmenter\n' + \
+                   '\the: testHeuristicEvaluate\n' + \
+                   '\tsoc: test_slope_correction\n'
     try:
         try:
             action = sys.argv[1]
         except IndexError:
             print('Usage: ./test.py <action>')
+            print(help_message)
             sys.exit(1)
         try:
             args_map[action]()
         except KeyError:
-            print('Available tests:\n',
-                  'ls: testLineSegmenter\n',
-                  'he: testHeuristicEvaluate\n')
-        # testLineEvaluate()
-        # testSegmentRecognize()
-        # testHeuristicEvaluate()
-        # testRecognizer()
-        # testHeuristicSegmenter()
-        # testLineSegmenter()
-        # testExtractDoc()
+            print(help_message)
+            # testLineEvaluate()
+            # testSegmentRecognize()
+            # testHeuristicEvaluate()
+            # testRecognizer()
+            # testHeuristicSegmenter()
+            # testLineSegmenter()
+            # testExtractDoc()
     except KeyboardInterrupt:
         print('\nExit')
