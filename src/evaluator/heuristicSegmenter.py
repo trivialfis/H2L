@@ -6,7 +6,10 @@ Last modified: Aug 15 2017
 '''
 import numpy as np
 from skimage import transform
+from normalization import image_utils
+from evaluator import line_segmenter
 from evaluator import h2l_debug
+import cv2
 
 
 debugger = h2l_debug.h2l_debugger()
@@ -55,7 +58,7 @@ class segmenter(object):
             raise ValueError('expected image shape (x, y), got ', image.shape)
         height, width = image.shape
         if width <= height*0.2:
-            return []
+            return image
         i = 0
         segmentationPoints = []
         while i < width:
@@ -73,3 +76,10 @@ class segmenter(object):
                                                  segmentationPoints,
                                                  HEIGHT=height)
         return characterList
+
+
+def segment(image):
+    temp = cv2.transpose(image.copy())
+    temp = image_utils.remove_edges(temp)
+    characters = line_segmenter.segment(temp)
+    return characters
