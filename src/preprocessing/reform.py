@@ -130,7 +130,8 @@ def resize(image, outputShape=(48, 48)):
     resized = np.zeros(outputShape)
     if maxInput > maxOutput:
         ratio = maxOutput / maxInput
-        resized = cv2.resize(image, dsize=(0, 0), fx=ratio, fy=ratio)
+        resized = cv2.resize(image, dsize=(0, 0), fx=ratio, fy=ratio,
+                             interpolation=cv2.INTER_NEAREST)
         # resized = transform.rescale(image, maxOutput/maxInput)
     else:
         rows, cols = image.shape

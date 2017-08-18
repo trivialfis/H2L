@@ -5,6 +5,15 @@ import numpy as np
 debugger = h2l_debug.h2l_debugger()
 
 
+def is_low_ratio(image, fraction=0.005):
+    forground = (image > 0).astype(np.uint8)
+    total_forground = np.sum(forground)
+    ratio = total_forground / (image.shape[0] * image.shape[1])
+    result = ratio < fraction
+
+    return result
+
+
 def binarize3d(image):
     '''
     Binarize IMAGE, return the binarized version.
@@ -56,7 +65,17 @@ def rotate(image, angle):
     M[0, 2] += (new_col / 2) - cx
     M[1, 2] += (new_row / 2) - cy
 
-    image = cv2.warpAffine(image, M, (new_col, new_row))
+    image = cv2.warpAffine(image, M, (new_col, new_row),
+                           flags=cv2.INTER_NEAREST)
+    return image
+
+
+def rescale_by_height(image, height):
+    rows, cols = image.shape
+    ratio = height / rows
+    image = cv2.resize(image, dsize=(0, 0), fx=ratio, fy=ratio,
+                       interpolation=cv2.INTER_NEAREST)
+    # image = transform.rescale(image, ratio)
     return image
 
 
@@ -128,7 +147,8 @@ def fill_to_size(image, dsize):
         ratio = dsize[0] / length
     else:
         ratio = dsize[1] / length
-    resized = cv2.resize(image, dsize=(0, 0), fx=ratio, fy=ratio)
+    resized = cv2.resize(image, dsize=(0, 0), fx=ratio, fy=ratio,
+                         interpolation=cv2.INTER_NEAREST)
     filled = np.zeros(dsize)
     filled_r, filled_c = filled.shape
     delta_r = int(filled_r - resized.shape[0]) // 2
