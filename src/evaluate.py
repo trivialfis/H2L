@@ -52,7 +52,6 @@ def build_equation(line):
             if np.max(character[-i, :]) > 1.0:
                 bottom = character.shape[0] - i
                 break
-        debuging.display('Middle', middle, 'Bottom', bottom)
         if bottom < middle:
             return True
         else:
@@ -65,7 +64,6 @@ def build_equation(line):
         for i in range(character.shape[0]):
             if np.max(character[i, :]) > 1.0:
                 top = i
-                # print('Top: ', top)
                 break
         if top > middle:
             return True
@@ -98,10 +96,6 @@ def build_equation(line):
         count += 1
     characterImages = [image_utils.remove_edges(char)
                        for char in characterImages]
-    # count = 0
-    # for c in characterImages:
-    #     debuging.save_img(c, caption='edge-removed'+str(count))
-    #     count += 1
     characterImages = [
         image_utils.fill_to_size(
             char,
