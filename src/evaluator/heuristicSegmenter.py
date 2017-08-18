@@ -5,7 +5,6 @@ Created:       Feb 22 2017
 Last modified: Aug 15 2017
 '''
 import numpy as np
-from skimage import transform
 from normalization import image_utils
 from evaluator import line_segmenter
 from evaluator import h2l_debug
@@ -38,11 +37,14 @@ class segmenter(object):
                 ratio = HEIGHT / length
             else:
                 ratio = 1
-            resized = transform.rescale(
+            resized = cv2.resize(
                 image[:,
                       segmentationPoints[lastPoint]:
                       segmentationPoints[lastPoint]+length],
-                ratio)
+                dsize=(0, 0),
+                fx=ratio, fy=ratio,
+                interpolation=cv2.INTER_NEAREST
+            )
             colStart = (HEIGHT - resized.shape[1]) // 2
             rowStart = (HEIGHT - resized.shape[0]) // 2
             character[

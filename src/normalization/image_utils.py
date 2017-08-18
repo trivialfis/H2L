@@ -21,6 +21,9 @@ def binarize3d(image):
         cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
         cv2.THRESH_BINARY, 5, 2)
 
+    mask = cv2.fastNlMeansDenoising(mask, None, h=10,
+                                    templateWindowSize=7,
+                                    searchWindowSize=21)
     return mask
 
 
@@ -56,7 +59,17 @@ def rotate(image, angle):
     M[0, 2] += (new_col / 2) - cx
     M[1, 2] += (new_row / 2) - cy
 
-    image = cv2.warpAffine(image, M, (new_col, new_row))
+    image = cv2.warpAffine(image, M, (new_col, new_row),
+                           flags=cv2.INTER_NEAREST)
+    return image
+
+
+def rescale_by_height(image, height):
+    rows, cols = image.shape
+    ratio = height / rows
+    image = cv2.resize(image, dsize=(0, 0), fx=ratio, fy=ratio,
+                       interpolation=cv2.INTER_NEAREST)
+    # image = transform.rescale(image, ratio)
     return image
 
 
@@ -128,7 +141,8 @@ def fill_to_size(image, dsize):
         ratio = dsize[0] / length
     else:
         ratio = dsize[1] / length
-    resized = cv2.resize(image, dsize=(0, 0), fx=ratio, fy=ratio)
+    resized = cv2.resize(image, dsize=(0, 0), fx=ratio, fy=ratio,
+                         interpolation=cv2.INTER_NEAREST)
     filled = np.zeros(dsize)
     filled_r, filled_c = filled.shape
     delta_r = int(filled_r - resized.shape[0]) // 2

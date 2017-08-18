@@ -146,9 +146,11 @@ def heursiticGenerate(image):
     lineImages = [slope_correct.correct_slope(line) for line in lineImages]
     line_count = 0
     for line in lineImages:
-        debuging.save_img(line, 'line_' + str(line_count))
+        debuging.save_img(line, 'line_corrected' + str(line_count))
         line_count += 1
-    lineImages = [reform.rescale(line, 64) for line in lineImages]
+    lineImages = [image_utils.rescale_by_height(line, 64)
+                  for line in lineImages]
+    # lineImages = [reform.rescale(line, 64) for line in lineImages]
     debuging.display(
         "Evaluate:: Number of line images: ",
         "\033[38;2;255;185;0m" + str(len(lineImages)) + "\033[0m")

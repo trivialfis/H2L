@@ -3,7 +3,7 @@ from skimage import filters, exposure
 from evaluator import h2l_debug
 import cv2
 
-STRIP_RATIO = 0.3
+STRIP_RATIO = 0.8
 
 LIMIT = 32
 RANGE = 2
@@ -113,7 +113,8 @@ def padding(image):
     length = 2 * LIMIT + RANGE
     paddedImage = np.zeros((rows+length, columns), dtype=np.uint8)
     paddedImage[length//2:length//2+rows, :] = image
-    result = cv2.resize(paddedImage, dsize=(rows, columns))
+    result = cv2.resize(paddedImage, dsize=(rows, columns),
+                        interpolation=cv2.INTER_NEAREST)
     return result
 
 
@@ -126,10 +127,20 @@ def segment(image):
         raise ValueError('Expected image with shape (x, y), got ' +
                          str(image.shape))
     padded = padding(image)
+    debugger.save_img(padded, 'padded')
     start_strip = padded[:, :int(padded.shape[1]*STRIP_RATIO)]
-    his = np.dot(start_strip, np.ones(shape=(start_strip.shape[1], 1)))
+    his = np.dot(start_strip,
+                 np.ones(shape=(start_strip.shape[1], 1)))
     value = filters.threshold_otsu(his)
     guessed_seg = his < value
+
+    debugger.display('guessed_seg shape:', guessed_seg.shape)
+    debugger.display('image shape:', image.shape)
+    temp = padded.copy()
+    for i in range(len(guessed_seg) - 1):
+        if guessed_seg[i]:
+            temp[i, :] = 255
+    debugger.save_img(temp, 'his')
 
     pre = -1
     index = 0
@@ -144,11 +155,16 @@ def segment(image):
         index += 1
     if 0 not in start_rows:
         start_rows.insert(0, 0)
-    if image.shape[0] - 1 not in start_rows:
-        start_rows.append(image.shape[0] - 1)
+    if padded.shape[0] - 1 not in start_rows:
+        start_rows.append(padded.shape[0] - 1)
 
     debugger.display('start_rows: ', start_rows)
-    paths = track(image, start_rows)
-    extracted_lines = extract_images(image, paths)
+    temp = padded.copy()
+    for row in start_rows:
+        temp[row, :] = 255
+    debugger.save_img(temp, 'start_rows')
+
+    paths = track(padded, start_rows)
+    extracted_lines = extract_images(padded, paths)
 
     return extracted_lines
