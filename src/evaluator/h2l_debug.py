@@ -19,6 +19,7 @@ class h2l_debugger():
             if type(images) is not list and type(images) is not tuple:
                 images = [images]
             for img in images:
+                plt.title(caption)
                 plt.imshow(img, cmap='gray')
                 plt.show()
 

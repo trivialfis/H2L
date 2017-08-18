@@ -5,6 +5,15 @@ import numpy as np
 debugger = h2l_debug.h2l_debugger()
 
 
+def is_low_ratio(image, fraction=0.005):
+    forground = (image > 0).astype(np.uint8)
+    total_forground = np.sum(forground)
+    ratio = total_forground / (image.shape[0] * image.shape[1])
+    result = ratio < fraction
+
+    return result
+
+
 def binarize3d(image):
     '''
     Binarize IMAGE, return the binarized version.
@@ -21,9 +30,6 @@ def binarize3d(image):
         cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
         cv2.THRESH_BINARY, 5, 2)
 
-    mask = cv2.fastNlMeansDenoising(mask, None, h=10,
-                                    templateWindowSize=7,
-                                    searchWindowSize=21)
     return mask
 
 
