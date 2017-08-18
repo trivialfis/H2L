@@ -96,6 +96,9 @@ def build_equation(line):
         count += 1
     characterImages = [image_utils.remove_edges(char)
                        for char in characterImages]
+    kernel = np.ones((2, 2), np. uint8)
+    characterImages = [cv2.erode(char, kernel, iterations=1)
+                       for char in characterImages]
     characterImages = [
         image_utils.fill_to_size(
             char,
