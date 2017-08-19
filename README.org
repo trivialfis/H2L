@@ -39,7 +39,6 @@ There is a huge problem when trying to recognize those characters. Although many
 * TODO To-do list for fis: [3/7]
  + [ ] A better character segmenter
  + [ ] Morphological Transformations for better training data generation.
- + [ ] Add floating point to data.
  + [ ] Better character recognizer
  + [ ] Characters segmentation check for o shape
 
