@@ -134,7 +134,7 @@ if __name__ == '__main__':
                 'soc': test_slope_correction}
     help_message = 'Available tests:\n' + \
                    '\tls: testLineSegmenter\n' + \
-                   'test_character_segmenter\n' + \
+                   '\tcs: test_character_segmenter\n' + \
                    '\the: testHeuristicEvaluate\n' + \
                    '\tsoc: test_slope_correction\n'
     try:

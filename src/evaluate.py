@@ -2,7 +2,6 @@
 File:          evaluate.py
 Author:        fis
 Created:       Feb 17 2017
-Last modified: Aug 14 2017
 '''
 from evaluator import heuristicSegmenter
 from evaluator import characterRecognizer
@@ -27,8 +26,9 @@ hs = heuristicSegmenter.segmenter()
 cr = characterRecognizer.recognizer()
 
 
-def build_equation(line):
-    def findMid(line):
+class position_finder(object):
+
+    def __init__(self, line, margin=5):
         '''Find the middle row of image's forground.'''
         if len(line.shape) != 2:
             raise ValueError('Expected image with shape (x, y), got ' +
@@ -42,22 +42,39 @@ def build_equation(line):
                 bottom = line.shape[0] - i
                 break
         middle = (top + bottom) / 2
-        return middle
+        self.global_middle = middle
+        self.last_middle = middle
+        self.margin = margin
 
-    def isSuper(character, middle):
+    def set_character_middle(self, character):
         if len(character.shape) != 2:
             raise ValueError('Expected image with shape (x, y), got ' +
-                             str(line.shape))
+                             str(character.shape))
+        for i in range(character.shape[0]):
+            if np.sum(character[i, :]) >= 1.0:
+                top = i
+                break
+        for i in range(1, character.shape[0]):
+            if np.sum(character[-i, :]) >= 1.0:
+                bottom = character.shape[0] - i
+                break
+        middle = (top + bottom) / 2
+        self.last_middle = middle
+
+    def is_supper(self, character, middle):
+        if len(character.shape) != 2:
+            raise ValueError('Expected image with shape (x, y), got ' +
+                             str(character.shape))
         for i in range(1, character.shape[0]):
             if np.max(character[-i, :]) > 1.0:
                 bottom = character.shape[0] - i
                 break
-        if bottom < middle:
+        if bottom < middle - self.margin:
             return True
         else:
             return False
 
-    def isSub(character, middle):
+    def is_sub(self, character, middle):
         if len(character.shape) != 2:
             raise ValueError('Expected image with shape (x, y) ,got ' +
                              str(character.shape))
@@ -65,10 +82,29 @@ def build_equation(line):
             if np.max(character[i, :]) > 1.0:
                 top = i
                 break
-        if top > middle:
+        if top > middle + self.margin:
             return True
         else:
             return False
+
+    def get_positions(self, character_images):
+        supper_flags = [self.is_supper(character_images[0], self.last_middle)]
+        sub_flags = [self.is_sub(character_images[0], self.last_middle)]
+        for i in range(1, len(character_images)):
+            if supper_flags[i-1] or sub_flags[i-1]:
+                middle = self.global_middle
+            else:
+                middle = self.last_middle
+            sup_flag = self.is_supper(character_images[i], middle)
+            sub_flag = self.is_sub(character_images[i], middle)
+            supper_flags.append(sup_flag)
+            sub_flags.append(sub_flag)
+            self.set_character_middle(character_images[i])
+
+        return supper_flags, sub_flags
+
+
+def build_equation(line):
 
     def is_symbol(character):
         result = len(character) > 2 and character[0] != '^' \
@@ -87,9 +123,9 @@ def build_equation(line):
         return
 
     debuging.display('Got', len(characterImages), 'characters.')
-    middle = findMid(line)
-    superFlag = [isSuper(char, middle) for char in characterImages]  # exp
-    subFlag = [isSub(char, middle) for char in characterImages]  # index
+
+    positioner = position_finder(line)
+    superFlag, subFlag = positioner.get_positions(characterImages)
     count = 0
     for c in characterImages:
         debuging.save_img(c, caption='segmented'+str(count))

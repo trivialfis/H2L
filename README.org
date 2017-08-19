@@ -40,7 +40,6 @@ There is a huge problem when trying to recognize those characters. Although many
  + [ ] A better character segmenter
  + [ ] Morphological Transformations for better training data generation.
  + [ ] Add floating point to data.
- + [ ] Better position judgment.
  + [ ] Better character recognizer
  + [ ] Characters segmentation check for o shape
 
