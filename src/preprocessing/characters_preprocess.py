@@ -34,8 +34,9 @@ def binarize(image):
 
 
 def load_images():
-    bar = tqdm(total=36, unit='symbol')
     symbols = os.listdir(SOURCE)
+    debugger.display(len(symbols))
+    bar = tqdm(total=len(symbols), unit='symbol')
     all_images = {}
     for sym in symbols:
         path = os.path.join(SOURCE, sym)
@@ -92,6 +93,10 @@ def save_images(all_images):
 
     print('Save')
     low_contrast = 0
+    if not os.path.exists(TRAINING):
+        os.mkdir(TRAINING)
+    if not os.path.exists(VALIDATION):
+        os.mkdir(VALIDATION)
     for k, v in all_images.items():
         training_images = v[:int(len(v)*TRAIN_RATIO)]
         try:
@@ -118,6 +123,10 @@ def start():
     all_images = list(all_images.items())
 
     size = len(all_images) // CPUS
-    tasks = [dict(all_images[size*i:size*(i+1)]) for i in range(CPUS)]
+    tasks = []
+    for i in range(CPUS-1):
+        tasks.append(dict(all_images[size*i:size*(i+1)]))
+    tasks.append(dict(all_images[(CPUS-1)*size:]))
+    # tasks = [dict(all_images[size*i:size*(i+1)]) for i in range(CPUS)]
     pool = Pool(processes=CPUS)
     pool.map(subprocess, tasks)

@@ -12,7 +12,7 @@ Commentary:
 # from preprocessing import lines_preprocess as lp
 # from preprocessing import words_slant_correct
 # from preprocessing import alphabet_preprocess as ap
-from preprocessing import manipulators_preprocess as mp
+# from preprocessing import manipulators_preprocess as mp
 # from multiprocessing import Pool, cpu_count
 # from random import shuffle
 # import numpy as np
@@ -57,12 +57,12 @@ from preprocessing import characters_preprocess as cp
 #     pool.map(words_slant_correct.start, tasks)
 
 
-def characters_o():
-    try:
-        # ap.start()
-        mp.start()
-    except KeyboardInterrupt:
-        print('\nExit')
+# def characters_o():
+#     try:
+#         # ap.start()
+#         mp.start()
+#     except KeyboardInterrupt:
+#         print('\nExit')
 
 
 def characters():
