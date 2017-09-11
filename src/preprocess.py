@@ -18,7 +18,7 @@ Commentary:
 # import numpy as np
 
 from preprocessing import characters_preprocess as cp
-
+from preprocessing import split_collected as sc
 
 # def baseWords():
 #     wordsList = wp.loadXMLs(wp.XML_PATH)
@@ -72,8 +72,16 @@ def characters():
         print('\nExit')
 
 
+def split():
+    try:
+        sc.start()
+    except KeyboardInterrupt:
+        print('\nExit')
+
+
 if __name__ == '__main__':
     # slantcorrectWords()
     # lines()
     # baseWords()
-    characters()
+    split()
+    # characters()
