@@ -6,6 +6,8 @@ VISUAL_FILE = './models/model_plot.png'
 NAME = 'character_recognizer'
 CHARACTER_MAP = './models/characters_map'
 
+SVM_MODEL = './models/characters_svm.pkl'
+
 BATCH_SIZE = 16
 VALIDATION_BATCH_SIZE = 300
 

@@ -82,7 +82,7 @@ def validationDataLoader():
     return (images, labels)
 
 
-def train_flow():
+def train_flow(batch_size=config.BATCH_SIZE):
     train_datagen = Image.ImageDataGenerator(
         zca_epsilon=None,
     )
@@ -90,7 +90,7 @@ def train_flow():
         config.TRAIN_DATA,
         color_mode='grayscale',
         target_size=(config.IMG_ROWS, config.IMG_COLS),
-        batch_size=config.BATCH_SIZE
+        batch_size=batch_size
     )
     mapping = flow.class_indices
     mapping = dict((v, k) for k, v in mapping.items())
