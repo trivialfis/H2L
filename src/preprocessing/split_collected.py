@@ -1,3 +1,5 @@
+# No image enhancement should happen here
+
 import cv2
 import os
 from normalization import image_utils
@@ -17,10 +19,6 @@ def load_images():
         image[-edge:, :] = 255
         image[:, :edge] = 255
         image[:, -edge:] = 255
-        # image = cv2.threshold(
-        #     image, 0, 255,
-        #     cv2.THRESH_BINARY + cv2.THRESH_OTSU
-        # )[1]
         images[sym] = image
     return images
 

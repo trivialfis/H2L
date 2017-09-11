@@ -6,12 +6,12 @@ VISUAL_FILE = './models/model_plot.png'
 NAME = 'character_recognizer'
 CHARACTER_MAP = './models/characters_map'
 
-BATCH_SIZE = 128
+BATCH_SIZE = 16
 VALIDATION_BATCH_SIZE = 300
 
-CLASS_NUM = 37
+CLASS_NUM = 35
 
-INIT_LEARNING_RATE = 2
+INIT_LEARNING_RATE = 0.2
 EPOCH = 30
 
 IMG_ROWS, IMG_COLS = 48, 48

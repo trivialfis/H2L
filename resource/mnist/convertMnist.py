@@ -1,5 +1,5 @@
-# convertMnist.py --- 
-# 
+# convertMnist.py ---
+#
 # Filename: convertMnist.py
 # Description:
 # Author: fis
@@ -14,14 +14,14 @@
 # Doc URL:
 # Keywords:
 # Compatibility:
-# 
-# 
+#
+#
 
-# Commentary: 
-# 
-# 
-# 
-# 
+# Commentary:
+#
+#
+#
+#
 
 # Change Log:
 #
@@ -46,16 +46,23 @@
 # Code:
 from six.moves import cPickle
 import gzip
+import os
+from skimage import io, filters
 import numpy as np
-from skimage import io
-from reform import binarize
 
 
-def save(labeledImages):
+def save(labeledImages, target):
     counter = 0
     for im in labeledImages:
         image, label = im
-        io.imsave(arr=image, fname='./train/'+str(label)+'/'+str(counter)+'.png')
+        value = filters.threshold_otsu(image)
+        mask = image < value
+        image = mask.astype(np.uint8)
+        image *= 255
+        path = os.path.join(target, str(label))
+        if not os.path.exists(path):
+            os.mkdir(path)
+        io.imsave(arr=image, fname=os.path.join(path, str(counter)+'.png'))
         counter += 1
 
 
@@ -67,9 +74,22 @@ trainImage, trainLabels = train
 trainImage = list(trainImage)
 trainLabels = list(trainLabels)
 trainImage = [image.reshape(28, 28) for image in trainImage]
-trainImage = [binarize(image) for image in trainImage]
 train = zip(trainImage, trainLabels)
-save(train)
+save(train, 'train')
+
+vali_images, vali_labels = validation
+vali_images = list(vali_images)
+vali_labels = list(vali_labels)
+vali_images = [image.reshape(28, 28) for image in vali_images]
+validation = zip(vali_images, vali_labels)
+save(validation, 'validation')
+
+test_images, test_labels = test
+test_images = list(test_images)
+test_labels = list(test_labels)
+test_images = [image.reshape(28, 28) for image in test_images]
+test = zip(test_images, test_labels)
+save(test, 'test')
 
 #
 # convertMnist.py ends here

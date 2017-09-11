@@ -80,7 +80,7 @@ def rescale_by_height(image, height):
 
 
 def remove_edges(image, escape=0.3):
-    '''Remove the white edges of the characters'''
+    '''Remove the black edges of the character image'''
     def detectRow(image, length, reverse=False):
         count = 0
         for i in range(length):
@@ -111,10 +111,7 @@ def remove_edges(image, escape=0.3):
         right = width - detectCol(image, width, True)
         rows = down - top
         cols = right - left
-        # debugger.display('left:', left, 'right:', right,
-        #                  'top:', top, 'down:', down)
-        # debugger.plot(image)
-        if rows < height * 0.3 and cols < width * 0.3:
+        if rows < height * escape and cols < width * escape:
             print('rows: ', rows, 'height *', escape, height*escape,
                   'rows < height * escape: ', rows < height*escape,
                   'cols: ', cols, 'width *', escape, width*escape,

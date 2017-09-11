@@ -1,21 +1,22 @@
 import os
-import random
-from random import shuffle
+from random import shuffle, randint
 from skimage import exposure
 import cv2
-from preprocessing.reform import randomReform  # , binarize
+from preprocessing.reform import randomReform
+from normalization import image_utils
 from evaluator import h2l_debug
+from configuration import characterRecognizerConfig as config
 from tqdm import tqdm
 import shutil
 import numpy as np
 from multiprocessing import Pool
 
-SOURCE = '../resource/pngs'
+SOURCE = '../resource/splited'
 TRAINING = '../resource/training'
 VALIDATION = '../resource/validation'
 TRAIN_RATIO = 0.9
 CPUS = 6
-LIMIT = 10000
+LIMIT = 100
 
 debugger = h2l_debug.h2l_debugger()
 
@@ -39,7 +40,9 @@ def load_images():
         images_path = [os.path.join(path, img) for img in images_name]
         images = [cv2.imread(img, 0) for img in images_path]
         images = [binarize_inv(img) for img in images]
-        debugger.plot(images[11])
+        kernel = np.ones((4, 4), np.uint8)
+        images = [cv2.morphologyEx(img, cv2.MORPH_OPEN, kernel)
+                  for img in images]
         all_images[sym] = images
         bar.update(1)
     return all_images
@@ -56,21 +59,26 @@ def generate(all_images):
 
     print('Generate')
     result = {}
-    di_kernel = np.ones((3, 3), np.uint8)
-    # cl_kernel = np.ones((4, 4), np.uint8)
+    di_kernel = np.ones((2, 2), np.uint8)
     for k, v in all_images.items():
         length = len(v)
         ori_length = length
         result[k] = v
         while length < 2*LIMIT:
-            index = random.randint(0, ori_length-1)
-            image = v[index]
-            image = cv2.dilate(image, di_kernel, iterations=1)
+            index = randint(0, ori_length-1)
+            image = v[index].copy()
             image = randomReform(v[index], binarizing=False)
-            image = cv2.dilate(image, di_kernel, iterations=1)
-            # image = cv2.morphologyEx(image, cv2.MORPH_CLOSE, cl_kernel)
+            image = cv2.erode(image, di_kernel, iterations=1)
             result[k].append(image)
             length += 1
+        result[k] = [image_utils.remove_edges(image, escape=0.1)
+                     for image in result[k]]
+        result[k] = [
+            image_utils.fill_to_size(
+                image,
+                (config.IMG_ROWS, config.IMG_COLS))
+            for image in result[k]
+        ]
     return result
 
 

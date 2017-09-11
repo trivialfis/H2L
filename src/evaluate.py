@@ -132,7 +132,10 @@ def build_equation(line):
         count += 1
     characterImages = [image_utils.remove_edges(char)
                        for char in characterImages]
-    kernel = np.ones((2, 2), np. uint8)
+    kernel = np.ones((4, 4), np.uint8)
+    characterImages = [cv2.morphologyEx(img, cv2.MORPH_OPEN, kernel)
+                       for img in characterImages]
+    kernel = np.ones((2, 2), np.uint8)
     characterImages = [cv2.erode(char, kernel, iterations=1)
                        for char in characterImages]
     characterImages = [
@@ -184,7 +187,6 @@ def heursiticGenerate(image):
     image = image_utils.binarize2d_inv(image)
     kernel = np.ones((2, 2), np.uint8)
     image = cv2.morphologyEx(image, cv2.MORPH_OPEN, kernel)
-    # image = cv2.morphologyEx(image, cv2.MORPH_CLOSE, kernel)
     debuging.save_img(image, 'binarized')
 
     if len(image.shape) != 2:
