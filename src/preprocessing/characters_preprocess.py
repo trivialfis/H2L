@@ -7,6 +7,7 @@ from preprocessing.reform import randomReform  # , binarize
 from evaluator import h2l_debug
 from tqdm import tqdm
 import shutil
+import numpy as np
 from multiprocessing import Pool
 
 SOURCE = '../resource/pngs'
@@ -26,13 +27,6 @@ def binarize_inv(image):
     return result
 
 
-def binarize(image):
-    result = cv2.threshold(
-        image, 0, 255,
-        cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
-    return result
-
-
 def load_images():
     symbols = os.listdir(SOURCE)
     debugger.display(len(symbols))
@@ -45,6 +39,7 @@ def load_images():
         images_path = [os.path.join(path, img) for img in images_name]
         images = [cv2.imread(img, 0) for img in images_path]
         images = [binarize_inv(img) for img in images]
+        debugger.plot(images[11])
         all_images[sym] = images
         bar.update(1)
     return all_images
@@ -61,14 +56,20 @@ def generate(all_images):
 
     print('Generate')
     result = {}
+    di_kernel = np.ones((3, 3), np.uint8)
+    # cl_kernel = np.ones((4, 4), np.uint8)
     for k, v in all_images.items():
         length = len(v)
         ori_length = length
         result[k] = v
         while length < 2*LIMIT:
             index = random.randint(0, ori_length-1)
+            image = v[index]
+            image = cv2.dilate(image, di_kernel, iterations=1)
             image = randomReform(v[index], binarizing=False)
-            result[k].append(binarize(image))
+            image = cv2.dilate(image, di_kernel, iterations=1)
+            # image = cv2.morphologyEx(image, cv2.MORPH_CLOSE, cl_kernel)
+            result[k].append(image)
             length += 1
     return result
 
@@ -88,7 +89,6 @@ def save_images(all_images):
                 low_contrast += 1 if exposure.is_low_contrast(image) else 0
                 index += 1
                 cv2.imwrite(filename=filename, img=image)
-                # io.imsave(fname=filename, arr=image)
         return low_contrast
 
     print('Save')
