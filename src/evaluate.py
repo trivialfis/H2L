@@ -1,10 +1,36 @@
-'''
-File:          evaluate.py
-Author:        fis
-Created:       Feb 17 2017
-'''
+# evaluate.py ---
+#
+# Filename: evaluate.py
+# Description:
+# Author: fis
+# Created: Feb 17 2017 (+0800)
+# Last-Updated: Tue Sep 12 09:12:26 2017 (+0800)
+#           By: fis
+#
+#
+
+# Commentary:
+#
+#
+#
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or (at
+# your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+#
+
+# Code:
+
 from evaluator import heuristicSegmenter
 from evaluator import characterRecognizer
+from evaluator import character_svm
 from evaluator import toLaTeX
 from evaluator import crop_image
 from evaluator import line_segmenter
@@ -23,7 +49,8 @@ warnings.filterwarnings('ignore')
 debuging = h2l_debug.h2l_debugger()
 
 hs = heuristicSegmenter.segmenter()
-cr = characterRecognizer.recognizer()
+# cr = characterRecognizer.recognizer()
+cr = character_svm.recognizer()
 
 
 class position_finder(object):
@@ -210,3 +237,6 @@ def heursiticGenerate(image):
     if len(equations) == 0:
         debuging.display('No equation found')
     toLaTeX.transoform(equations)
+
+#
+# evaluate.py ends here

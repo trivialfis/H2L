@@ -28,3 +28,8 @@ def modelExists():
     weightsExists = os.path.exists(WEIGHTS_FILE)
     architectureExists = os.path.exists(ARCHITECTURE_FILE)
     return weightsExists and architectureExists
+
+
+def svm_exists():
+    model_exists = os.path.exists(SVM_MODEL)
+    return model_exists

@@ -24,16 +24,12 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License
-# along with GNU Emacs.  If not, see <http://www.gnu.org/licenses/>.
-#
-#
 
 # Code:
 
 from sklearn import svm
+from sklearn.externals import joblib
 import numpy as np
-import pickle
 from data import characters
 from configuration import characterRecognizerConfig as config
 
@@ -58,11 +54,10 @@ class trainer(object):
         self.labels = self.labels.reshape((self.labels.shape[0], ))
 
     def train(self):
-        clf = svm.SVC(decision_function_shape='ovo')
+        clf = svm.SVC(kernel='poly', degree=6)
         print('Start training SVM.')
         clf.fit(self.images, self.labels)
-        with open(config.SVM_MODEL, 'wb') as f:
-            pickle.dump(clf, f)
+        joblib.dump(clf, config.SVM_MODEL)
 
 #
 # character_recogizer_svm.py ends here
