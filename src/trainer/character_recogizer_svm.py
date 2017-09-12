@@ -32,6 +32,9 @@ from sklearn.externals import joblib
 import numpy as np
 from data import characters
 from configuration import characterRecognizerConfig as config
+from evaluator import h2l_debug
+
+debugger = h2l_debug.h2l_debugger()
 
 
 class trainer(object):
@@ -55,9 +58,10 @@ class trainer(object):
 
     def train(self):
         clf = svm.SVC(kernel='poly', degree=6)
-        print('Start training SVM.')
+        debugger.display('Start training SVM.')
         clf.fit(self.images, self.labels)
         joblib.dump(clf, config.SVM_MODEL)
+        debugger.display('Finish training SVM.')
 
 #
 # character_recogizer_svm.py ends here
