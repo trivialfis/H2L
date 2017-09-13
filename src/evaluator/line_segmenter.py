@@ -113,8 +113,9 @@ def padding(image):
     length = 2 * LIMIT + RANGE
     paddedImage = np.zeros((rows+length, columns), dtype=np.uint8)
     paddedImage[length//2:length//2+rows, :] = image
-    result = cv2.resize(paddedImage, dsize=(rows, columns),
-                        interpolation=cv2.INTER_NEAREST)
+    # result = cv2.resize(paddedImage, dsize=(rows, columns),
+    #                     interpolation=cv2.INTER_NEAREST)
+    result = paddedImage
     return result
 
 

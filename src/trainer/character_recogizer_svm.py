@@ -57,7 +57,11 @@ class trainer(object):
         self.labels = self.labels.reshape((self.labels.shape[0], ))
 
     def train(self):
-        clf = svm.SVC(kernel='poly', degree=6)
+        clf = svm.SVC(C=100, cache_size=200,
+                      decision_function_shape='ovr', degree=5,
+                      kernel='rbf', class_weight='balanced',
+                      tol=0.001,
+                      verbose=True)
         debugger.display('Start training SVM.')
         clf.fit(self.images, self.labels)
         joblib.dump(clf, config.SVM_MODEL)

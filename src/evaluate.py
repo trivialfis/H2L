@@ -30,13 +30,13 @@
 
 from evaluator import heuristicSegmenter
 from evaluator import characterRecognizer
-from evaluator import character_svm
+# from evaluator import character_svm
 from evaluator import toLaTeX
 from evaluator import crop_image
 from evaluator import line_segmenter
 
 from configuration import characterRecognizerConfig as crconfig
-from normalization import image_utils, slope_correct
+from normalization import image_utils  # , slope_correct
 
 import numpy as np
 import cv2
@@ -49,8 +49,8 @@ warnings.filterwarnings('ignore')
 debuging = h2l_debug.h2l_debugger()
 
 hs = heuristicSegmenter.segmenter()
-# cr = characterRecognizer.recognizer()
-cr = character_svm.recognizer()
+cr = characterRecognizer.recognizer()
+# cr = character_svm.recognizer()
 
 
 class position_finder(object):
@@ -159,12 +159,12 @@ def build_equation(line):
         count += 1
     characterImages = [image_utils.remove_edges(char)
                        for char in characterImages]
-    kernel = np.ones((4, 4), np.uint8)
+    kernel = np.ones((2, 2), np.uint8)
     characterImages = [cv2.morphologyEx(img, cv2.MORPH_OPEN, kernel)
                        for img in characterImages]
-    kernel = np.ones((2, 2), np.uint8)
-    characterImages = [cv2.erode(char, kernel, iterations=1)
-                       for char in characterImages]
+    # kernel = np.ones((2, 2), np.uint8)
+    # characterImages = [cv2.erode(char, kernel, iterations=1)
+    #                    for char in characterImages]
     characterImages = [
         image_utils.fill_to_size(
             char,
@@ -188,7 +188,7 @@ def build_equation(line):
     for i in range(len(characters)):
         if superFlag[i] and not is_symbol(characters[i]):
             char = '^' + characters[i] + ' '
-        elif subFlag[i] and not is_symbol(characters[i]):
+        elif subFlag[i] and not is_symbol(characters[i]) and not characters[i] in [',', '-']:
             char = '_' + characters[i] + ' '
         else:
             char = characters[i] + ' '
@@ -221,7 +221,7 @@ def heursiticGenerate(image):
                          + str(image.shape))
 
     lineImages = line_segmenter.segment(image)
-    lineImages = [slope_correct.correct_slope(line) for line in lineImages]
+    # lineImages = [slope_correct.correct_slope(line) for line in lineImages]
     line_count = 0
     for line in lineImages:
         debuging.save_img(line, 'line_corrected' + str(line_count))

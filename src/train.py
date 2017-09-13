@@ -28,5 +28,5 @@ def train_character_svm():
 
 
 if __name__ == '__main__':
-    # trainCharacterRecognizer()
-    train_character_svm()
+    trainCharacterRecognizer()
+    # train_character_svm()

@@ -11,6 +11,7 @@ from PIL import Image
 import numpy as np
 from evaluator import h2l_debug
 from scipy.ndimage.filters import rank_filter
+import sys
 
 
 debugger = h2l_debug.h2l_debugger()
@@ -231,12 +232,15 @@ def crop_image(image):
     scale, im = downscale_image(orig_im)
 
     edges = cv2.Canny(np.asarray(im), 100, 200)
-
+    debugger.save_img(edges, 'edges')
     # TODO: dilate image _before_ finding a border. This is crazy sensitive!
     temp, contours, hierarchy = cv2.findContours(
         edges, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     borders = find_border_components(contours, edges)
-    borders.sort(key=lambda i, x1, y1, x2, y2: (x2 - x1) * (y2 - y1))
+    try:
+        borders.sort(key=lambda i, x1, y1, x2, y2: (x2 - x1) * (y2 - y1))
+    except TypeError:
+        sys.exit('Cannot crop the image, exit now.')
 
     border_contour = None
     if len(borders):

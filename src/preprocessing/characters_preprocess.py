@@ -3,20 +3,20 @@ from random import shuffle, randint
 from skimage import exposure
 import cv2
 from preprocessing.reform import randomReform
-from normalization import image_utils
+# from normalization import image_utils
 from evaluator import h2l_debug
-from configuration import characterRecognizerConfig as config
+# from configuration import characterRecognizerConfig as config
 from tqdm import tqdm
-import shutil
 import numpy as np
 from multiprocessing import Pool
 
-SOURCE = '../resource/splited'
+SOURCE = '../resource/pngs'
+# SOURCE = '../resource/splited'
 TRAINING = '../resource/training'
 VALIDATION = '../resource/validation'
 TRAIN_RATIO = 0.9
 CPUS = 6
-LIMIT = 100
+LIMIT = 2000
 
 debugger = h2l_debug.h2l_debugger()
 
@@ -30,7 +30,7 @@ def binarize_inv(image):
 
 def load_images():
     symbols = os.listdir(SOURCE)
-    debugger.display(len(symbols))
+    debugger.display('Total classes: ', len(symbols))
     bar = tqdm(total=len(symbols), unit='symbol')
     all_images = {}
     for sym in symbols:
@@ -40,8 +40,10 @@ def load_images():
         images_path = [os.path.join(path, img) for img in images_name]
         images = [cv2.imread(img, 0) for img in images_path]
         images = [binarize_inv(img) for img in images]
-        kernel = np.ones((4, 4), np.uint8)
-        images = [cv2.morphologyEx(img, cv2.MORPH_OPEN, kernel)
+        kernel = np.ones((3, 3), np.uint8)
+        # images = [cv2.morphologyEx(img, cv2.MORPH_OPEN, kernel)
+        #           for img in images]
+        images = [cv2.dilate(img, kernel=kernel, iterations=1)
                   for img in images]
         all_images[sym] = images
         bar.update(1)
@@ -71,14 +73,19 @@ def generate(all_images):
             image = cv2.erode(image, di_kernel, iterations=1)
             result[k].append(image)
             length += 1
-        result[k] = [image_utils.remove_edges(image, escape=0.1)
-                     for image in result[k]]
+        # result[k] = [image_utils.remove_edges(image, escape=0.1)
+        #              for image in result[k]]
         result[k] = [
-            image_utils.fill_to_size(
-                image,
-                (config.IMG_ROWS, config.IMG_COLS))
+            cv2.dilate(
+                image, di_kernel, iterations=1
+            )
             for image in result[k]
         ]
+        # result[k] = [
+        #     image_utils.fill_to_size(
+        #         image,
+        #         (config.IMG_ROWS, config.IMG_COLS))
+        # ]
     return result
 
 
@@ -88,9 +95,8 @@ def save_images(all_images):
         low_contrast = 0
         for symbol, images in data.items():
             path = os.path.join(target, symbol)
-            if os.path.exists(path):
-                shutil.rmtree(path)
-            os.mkdir(path)
+            if not os.path.exists(path):
+                os.mkdir(path)
             index = 0
             for image in images:
                 filename = os.path.join(path, str(index) + '.png')
@@ -120,7 +126,7 @@ def save_images(all_images):
 def subprocess(images):
     images = generate(images)
     low_contrast = save_images(images)
-    debugger.display(low_contrast)
+    debugger.display('Low contrast: ', low_contrast)
 
 
 def start():
