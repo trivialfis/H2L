@@ -87,7 +87,8 @@ def remove_border(contour, ary):
     r = cv2.minAreaRect(contour)
     degs = r[2]
     if angle_from_right(degs) <= 10.0:
-        box = cv2.cv.BoxPoints(r)
+        # box = cv2.cv.BoxPoints(r)
+        box = cv2.boxPoints(r)
         box = np.int0(box)
         cv2.drawContours(c_im, [box], 0, 255, -1)
         cv2.drawContours(c_im, [box], 0, 0, 4)
@@ -237,9 +238,13 @@ def crop_image(image):
     temp, contours, hierarchy = cv2.findContours(
         edges, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     borders = find_border_components(contours, edges)
+    debugger.display('crop_image: borders: ', borders)
     try:
-        borders.sort(key=lambda i, x1, y1, x2, y2: (x2 - x1) * (y2 - y1))
-    except TypeError:
+        borders.sort(
+            key=lambda area: (area[3] - area[1]) * (area[4] - area[2])
+        )
+    except TypeError as e:
+        print(e)
         sys.exit('Cannot crop the image, exit now.')
 
     border_contour = None

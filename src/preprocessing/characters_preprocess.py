@@ -3,7 +3,7 @@ from random import shuffle, randint
 from skimage import exposure
 import cv2
 from preprocessing.reform import randomReform
-# from normalization import image_utils
+from normalization import image_utils
 from evaluator import h2l_debug
 # from configuration import characterRecognizerConfig as config
 from tqdm import tqdm
@@ -16,7 +16,10 @@ TRAINING = '../resource/training'
 VALIDATION = '../resource/validation'
 TRAIN_RATIO = 0.9
 CPUS = 6
-LIMIT = 2000
+####
+LIMIT = 200
+####
+# LIMIT = 2000
 
 debugger = h2l_debug.h2l_debugger()
 
@@ -73,19 +76,43 @@ def generate(all_images):
             image = cv2.erode(image, di_kernel, iterations=1)
             result[k].append(image)
             length += 1
+        ####
+        # remove_edges only for collected
         # result[k] = [image_utils.remove_edges(image, escape=0.1)
         #              for image in result[k]]
+        ####
+
+        ####
+        # Dilate only for pngs
         result[k] = [
             cv2.dilate(
                 image, di_kernel, iterations=1
             )
             for image in result[k]
         ]
+        # di_kernel = np.ones((2, 2), np.uint8)
         # result[k] = [
-        #     image_utils.fill_to_size(
-        #         image,
-        #         (config.IMG_ROWS, config.IMG_COLS))
+        #     # cv2.morphologyEx(img, cv2.MORPH_BLACKHAT, di_kernel)
+        #     cv2.morphologyEx(img, cv2.MORPH_TOPHAT, di_kernel)
+        #     for img in result[k]
         # ]
+        # result[k] = [
+        #     cv2.dilate(
+        #         image, di_kernel, iterations=2
+        #     )
+        #     for image in result[k]
+        # ]
+        ####
+
+        ####
+        # erode only for collected
+        # result[k] = [
+        #     cv2.erode(
+        #         image, di_kernel, iterations=1
+        #     )
+        #     for image in result[k]
+        # ]
+        ####
     return result
 
 
@@ -99,7 +126,7 @@ def save_images(all_images):
                 os.mkdir(path)
             index = 0
             for image in images:
-                filename = os.path.join(path, str(index) + '.png')
+                filename = os.path.join(path, str(index) + 'a.png')
                 low_contrast += 1 if exposure.is_low_contrast(image) else 0
                 index += 1
                 cv2.imwrite(filename=filename, img=image)

@@ -162,6 +162,12 @@ def build_equation(line):
     kernel = np.ones((2, 2), np.uint8)
     characterImages = [cv2.morphologyEx(img, cv2.MORPH_OPEN, kernel)
                        for img in characterImages]
+    characterImages = [cv2.morphologyEx(img, cv2.MORPH_CLOSE, kernel)
+                       for img in characterImages]
+    count = 0
+    for c in characterImages:
+        debuging.save_img(c, caption='morphologyEx'+str(count))
+        count += 1
     # kernel = np.ones((2, 2), np.uint8)
     # characterImages = [cv2.erode(char, kernel, iterations=1)
     #                    for char in characterImages]

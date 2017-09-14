@@ -4,7 +4,7 @@ import cv2
 import os
 from normalization import image_utils
 
-SOURCE = '../resource/collected'
+SOURCE = '../resource/binarized'
 TARGET = '../resource/splited'
 
 
@@ -13,12 +13,12 @@ def load_images():
     images = {}
     edge = 25
     for sym in symbols:
-        image = cv2.imread(os.path.join(SOURCE, sym))
-        image = image_utils.binarize3d(image)
-        image[:edge, :] = 255
-        image[-edge:, :] = 255
-        image[:, :edge] = 255
-        image[:, -edge:] = 255
+        image = cv2.imread(os.path.join(SOURCE, sym), 0)
+        # image = image_utils.binarize3d(image)
+        image[:edge, :] = 0
+        image[-edge:, :] = 0
+        image[:, :edge] = 0
+        image[:, -edge:] = 0
         images[sym] = image
     return images
 
