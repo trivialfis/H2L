@@ -141,6 +141,5 @@ def main():
 if __name__ == '__main__':
     try:
         main()
-    except SystemExit as e:
-        ret = e.code
-    sys.exit(ret)
+    except KeyboardInterrupt:
+        print('\nExit')
