@@ -7,57 +7,6 @@ from gi.repository import Gtk, Gdk, GLib, Gio
 from gi.repository import GdkPixbuf
 
 
-# MENU_XML = """
-# <?xml version="1.0" encoding="UTF-8"?>
-# <interface>
-#   <menu id="app-menu">
-#     <section>
-#       <attribute name="label" translatable="yes">Change label</attribute>
-#       <item>
-#         <attribute name="action">win.change_label</attribute>
-#         <attribute name="target">String 1</attribute>
-#         <attribute name="label" translatable="yes">String 1</attribute>
-#       </item>
-#       <item>
-#         <attribute name="action">win.change_label</attribute>
-#         <attribute name="target">String 2</attribute>
-#         <attribute name="label" translatable="yes">String 2</attribute>
-#       </item>
-#       <item>
-#         <attribute name="action">win.change_label</attribute>
-#         <attribute name="target">String 3</attribute>
-#         <attribute name="label" translatable="yes">String 3</attribute>
-#       </item>
-#     </section>
-#     <section>
-#       <item>
-#         <attribute name="action">win.maximize</attribute>
-#         <attribute name="label" translatable="yes">Maximize</attribute>
-#       </item>
-#     </section>
-#     <section>
-#       <item>
-#         <attribute name="action">app.about</attribute>
-#         <attribute name="label" translatable="yes">_About</attribute>
-#       </item>
-#       <item>
-#         <attribute name="action">app.quit</attribute>
-#         <attribute name="label" translatable="yes">_Quit</attribute>
-#         <attribute name="accel">&lt;Primary&gt;q</attribute>
-#     </item>
-#     </section>
-#   </menu>
-# </interface>
-# """
-
-
-def main():
-    win = Gtk.Window(title='H2L')
-    win.connect('delete-event', Gtk.main_quit)
-    win.show_all()
-    Gtk.main()
-
-
 class H2L_WINDOW(Gtk.ApplicationWindow):
 
     def __init__(self, *args, **kwargs):
@@ -68,10 +17,7 @@ class H2L_WINDOW(Gtk.ApplicationWindow):
 
         button = Gtk.Button('Choose File')
         button.connect('clicked', self.on_file_clicked)
-        # self.text_view = Gtk.TextView()
-        # self.text_buffer = self.text_view.get_buffer()
         self.vbox.pack_start(button, True, True, 0)
-        # self.vbox.add(self.text_view)
 
         self.add(self.vbox)
         self.set_default_size(800, 600)
@@ -154,7 +100,6 @@ class Application(Gtk.Application):
     def do_startup(self):
         Gtk.Application.do_startup(self)
 
-        # self.window = H2L_WINDOW(application=self, title='H2L')
         action = Gio.SimpleAction.new("about", None)
         action.connect("activate", self.on_about)
         self.add_action(action)
@@ -163,14 +108,8 @@ class Application(Gtk.Application):
         action.connect("activate", self.on_quit)
         self.add_action(action)
 
-        # builder = Gtk.Builder.new_from_string(MENU_XML, -1)
-        # self.set_app_menu(builder.get_object("app-menu"))
-
     def do_activate(self):
-        # We only allow a single window and raise any existing ones
         if not self.window:
-            # Windows are associated with the application
-            # when the last one is closed the application shuts down
             self.window = H2L_WINDOW(application=self, title="Main Window")
             print('Activate')
         self.window.present()
@@ -179,7 +118,6 @@ class Application(Gtk.Application):
         options = command_line.get_options_dict()
 
         if options.contains("test"):
-            # This is printed on the main instance
             print("Test argument recieved")
 
         self.activate()
@@ -193,11 +131,16 @@ class Application(Gtk.Application):
         self.quit()
 
 
-ui = H2L_WINDOW()
-ui.connect('delete-event', Gtk.main_quit)
-ui.show_all()
-Gtk.main()
+def main():
+    ui = H2L_WINDOW()
+    ui.connect('delete-event', Gtk.main_quit)
+    ui.show_all()
+    Gtk.main()
 
-# if __name__ == '__main__':
-#     app = Application()
-#     app.run(sys.argv)
+
+if __name__ == '__main__':
+    try:
+        main()
+    except SystemExit as e:
+        ret = e.code
+    sys.exit(ret)
