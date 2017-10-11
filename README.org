@@ -37,6 +37,7 @@ Codes are glued together, and since the project is still in experiment phase, th
 There is a huge problem when trying to recognize those characters. Although many papers were published to address the image recognition problem, but the performance described in papers and in real life are different. So, here the main task is to tackle the recognition performance issue.
 
 * TODO To-do list for fis: [0/3]
+ + [ ] Use auto-encoder to learn a intermediate representation
  + [ ] A better character segmenter
  + [ ] Better character recognizer
  + [ ] Characters segmentation check for o shape
