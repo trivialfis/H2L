@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # character_svm.py ---
 #
 # Filename: character_svm.py

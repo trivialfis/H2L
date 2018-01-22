@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 '''
 File:          heuristic_segmenter.py
 Author:        fis

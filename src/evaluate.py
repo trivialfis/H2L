@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # evaluate.py ---
 #
 # Filename: evaluate.py

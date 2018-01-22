@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import gi
 import cv2
 import sys

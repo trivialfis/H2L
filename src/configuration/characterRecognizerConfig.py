@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import os
 
 ARCHITECTURE_FILE = './models/character_recognizer_architure.json'

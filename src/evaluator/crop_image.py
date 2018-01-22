@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 '''
 This part of code is copied from:
     https://github.com/danvk/oldnyc/blob/master/ocr/tess/crop_morphology.py

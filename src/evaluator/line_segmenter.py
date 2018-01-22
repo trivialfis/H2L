@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import numpy as np
 from skimage import filters, exposure
 from evaluator import h2l_debug

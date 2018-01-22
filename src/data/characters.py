@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 '''
 File:          characters.py
 Author:        fis

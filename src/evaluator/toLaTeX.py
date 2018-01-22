@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """
 Author: fis
 Last modified: Aug 15 2017
