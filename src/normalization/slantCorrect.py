@@ -1,18 +1,23 @@
 #!/usr/bin/env python3
-'''
-File:          slantCorrect.py
-Author:        fis
-Created:       Feb 13 2017
-Last modified: Feb 20 2017
+#
+# Copyright © 2017, 2018 Fis Trivial <ybbs.daans@hotmail.com>
+#
+# This file is part of H2L.
+#
+# H2L is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# H2L is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with H2L.  If not, see <http://www.gnu.org/licenses/>.
+#
 
-Description:
-Cite:
-A new normalization technique for cursive handwritten words
-Alessandro Vinciarelli * , Juergen Luettin 1
-IDIAP ± Institut Dalle Molle d'Intelligence, Arti®cielle Perceptive,
-Rue du Simplon 4, CP592, 1920 Martigny, Switzerland
-Received 19 October 2000; received in revised form 26 February 2001
-'''
 from skimage import filters
 from skimage.transform import AffineTransform, warp
 import numpy as np

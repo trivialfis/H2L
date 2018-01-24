@@ -1,33 +1,22 @@
 #!/usr/bin/env python3
-# evaluate.py ---
 #
-# Filename: evaluate.py
-# Description:
-# Author: fis
-# Created: Feb 17 2017 (+0800)
-# Last-Updated: Tue Sep 12 09:12:26 2017 (+0800)
-#           By: fis
+# Copyright © 2017, 2018 Fis Trivial <ybbs.daans@hotmail.com>
 #
+# This file is part of H2L.
 #
-
-# Commentary:
-#
-#
-#
-#
-# This program is free software: you can redistribute it and/or modify
+# H2L is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or (at
-# your option) any later version.
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 #
-# This program is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# General Public License for more details.
+# H2L is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
 #
+# You should have received a copy of the GNU General Public License
+# along with H2L.  If not, see <http://www.gnu.org/licenses/>.
 #
-
-# Code:
 
 from evaluator import heuristicSegmenter
 from evaluator import characterRecognizer

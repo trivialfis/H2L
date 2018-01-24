@@ -1,31 +1,22 @@
-# character_recogizer_svm.py ---
+#!/usr/bin/env python3
 #
-# Filename: character_recogizer_svm.py
-# Description:
-# Author: fis
-# Created: Mon Sep 11 22:59:35 2017 (+0800)
-# Last-Updated: Tue Sep 12 01:24:36 2017 (+0800)
-#           By: fis
+# Copyright © 2017, 2018 Fis Trivial <ybbs.daans@hotmail.com>
 #
+# This file is part of H2L.
 #
-
-# Commentary:
-#
-#
-#
-#
-# This program is free software: you can redistribute it and/or modify
+# H2L is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or (at
-# your option) any later version.
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 #
-# This program is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# General Public License for more details.
+# H2L is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
 #
-
-# Code:
+# You should have received a copy of the GNU General Public License
+# along with H2L.  If not, see <http://www.gnu.org/licenses/>.
+#
 
 from sklearn import svm
 from sklearn.externals import joblib
