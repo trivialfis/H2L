@@ -132,15 +132,22 @@ class Application(Gtk.Application):
         self.quit()
 
 
-def main():
+def gui():
     ui = H2L_WINDOW()
     ui.connect('delete-event', Gtk.main_quit)
     ui.show_all()
     Gtk.main()
 
 
+def cli():
+    pass
+
+
 if __name__ == '__main__':
     try:
-        main()
+        if sys.stdin.isatty():
+            gui()
+        else:
+            cli()
     except KeyboardInterrupt:
         print('\nExit')
