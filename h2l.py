@@ -23,7 +23,7 @@ import cv2
 import sys
 import argparse
 from distutils.version import LooseVersion
-from h2l.evaluator import h2l_debug 
+from h2l.evaluator import h2l_debug
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk, GLib, Gio
