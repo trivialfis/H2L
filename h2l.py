@@ -21,10 +21,15 @@
 import gi
 import cv2
 import sys
+import argparse
+from distutils.version import LooseVersion
+from h2l.evaluator import h2l_debug 
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk, GLib, Gio
 from gi.repository import GdkPixbuf
+
+debugger = h2l_debug.h2l_debugger()
 
 
 class H2L_WINDOW(Gtk.ApplicationWindow):
@@ -158,23 +163,54 @@ def gui():
     Gtk.main()
 
 
+def cli():
+    raise NotImplementedError('Cli not implemented.')
+
+
+def _require_version(name, version):
+    try:
+        local_version = __import__(name).__version__
+    except ImportError as e:
+        print('Import', name, 'failed, make sure you have it installed')
+        raise e
+    if LooseVersion(local_version) < LooseVersion(version):
+        raise ValueError(
+            'Local version:', local_version, 'Required version: ', version
+        )
+
+
 def check_modules():
     try:
         from h2l.evaluate import heursiticGenerate
     except ModuleNotFoundError as e:
         print('Self import failed', file=sys.stderr)
         raise e
+    _require_version("numpy", "1.12.1")
+    _require_version("skimage", "0.13.1")
+    _require_version("cv2", "3.3.0.10")
+    _require_version("keras", "2.1.2")
+    _require_version("tensorflow", "1.3.1")
+    debugger.display("All modules checked, we are safe.")
 
-def cli():
-    pass
+
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--dataset', type=str, help='Dataset for training.')
+    parser.add_argument('--algorithm', type=str, help='Algorithm used')
+    parser.add_argument('--nogui', type=bool, help='Run as command.')
+    args = parser.parse_args()
+    if args.dataset:
+        from h2l import train
+    else:
+        if args.nogui:
+            cli()
+        else:
+            gui()
 
 
 if __name__ == '__main__':
     check_modules()
     try:
-        if sys.stdin.isatty():
-            gui()
-        else:
-            cli()
+        parse_args()
     except KeyboardInterrupt:
         print('\nExit')
