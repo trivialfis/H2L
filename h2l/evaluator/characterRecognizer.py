@@ -21,8 +21,8 @@
 import sys
 from keras import models
 import numpy as np
-from configuration import characterRecognizerConfig as config
-from evaluator import h2l_debug
+from ..configuration import characterRecognizerConfig as config
+from . import h2l_debug
 
 debugger = h2l_debug.h2l_debugger()
 

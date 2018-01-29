@@ -20,8 +20,7 @@
 
 import numpy as np
 from skimage import filters, exposure
-from evaluator import h2l_debug
-import cv2
+from . import h2l_debug
 
 STRIP_RATIO = 0.8
 

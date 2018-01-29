@@ -22,9 +22,9 @@ import os
 from random import shuffle, randint
 from skimage import exposure
 import cv2
-from preprocessing.reform import randomReform
-from normalization import image_utils
-from evaluator import h2l_debug
+from .reform import randomReform
+from ..normalization import image_utils
+from ..evaluator import h2l_debug
 # from configuration import characterRecognizerConfig as config
 from tqdm import tqdm
 import numpy as np

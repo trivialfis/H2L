@@ -21,7 +21,8 @@
 from skimage import transform, filters, io
 import numpy as np
 import cv2
-from evaluator import h2l_debug
+
+from ..evaluator import h2l_debug
 
 debugger = h2l_debug.h2l_debugger()
 

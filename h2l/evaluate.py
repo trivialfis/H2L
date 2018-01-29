@@ -18,12 +18,12 @@
 # along with H2L.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from evaluator import heuristicSegmenter
-from evaluator import characterRecognizer
+from .evaluator import heuristicSegmenter
+from .evaluator import characterRecognizer
 # from evaluator import character_svm
-from evaluator import toLaTeX
-from evaluator import crop_image
-from evaluator import line_segmenter
+from .evaluator import toLaTeX
+from .evaluator import crop_image
+from .evaluator import line_segmenter
 
 from configuration import characterRecognizerConfig as crconfig
 from normalization import image_utils  # , slope_correct

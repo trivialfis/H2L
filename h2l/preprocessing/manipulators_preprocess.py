@@ -25,8 +25,8 @@ import numpy as np
 import cv2
 import os
 import pickle
-from preprocessing import reform
-from configuration import characterRecognizerConfig as config
+from . import reform
+from ..configuration import characterRecognizerConfig as config
 
 from evaluator import h2l_debug
 

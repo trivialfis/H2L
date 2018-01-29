@@ -19,10 +19,11 @@
 #
 
 import numpy as np
-from normalization import image_utils
-from evaluator import line_segmenter
-from evaluator import h2l_debug
 import cv2
+
+from ..normalization import image_utils
+from . import line_segmenter
+from . import h2l_debug
 
 
 debugger = h2l_debug.h2l_debugger()
