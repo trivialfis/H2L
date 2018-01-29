@@ -88,7 +88,7 @@ class H2L_WINDOW(Gtk.ApplicationWindow):
 
         dialog.destroy()
 
-        from evaluate import heursiticGenerate
+        from h2l.evaluate import heursiticGenerate
         print('filename confirm: ', filename)
         image = cv2.imread(filename)
         heursiticGenerate(image)
@@ -158,11 +158,19 @@ def gui():
     Gtk.main()
 
 
+def check_modules():
+    try:
+        from h2l.evaluate import heursiticGenerate
+    except ModuleNotFoundError as e:
+        print('Self import failed', file=sys.stderr)
+        raise e
+
 def cli():
     pass
 
 
 if __name__ == '__main__':
+    check_modules()
     try:
         if sys.stdin.isatty():
             gui()

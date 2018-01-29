@@ -19,8 +19,8 @@
 #
 
 from skimage import io
-from preprocessing.reform import binarize
-from normalization import slantCorrect
+from .reform import binarize
+from ..normalization import slantCorrect
 
 IMAGE_PATH = '../resource/words/'
 XML_PATH = '../resource/xml/'

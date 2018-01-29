@@ -21,7 +21,6 @@
 
 import cv2
 import os
-from normalization import image_utils
 
 SOURCE = '../resource/binarized'
 TARGET = '../resource/splited'

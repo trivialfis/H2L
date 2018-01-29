@@ -19,9 +19,9 @@
 #
 
 import numpy as np
-from normalization import image_utils
 
-from evaluator import h2l_debug
+from . import image_utils
+from ..evaluator import h2l_debug
 
 debugger = h2l_debug.h2l_debugger()
 

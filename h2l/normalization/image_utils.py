@@ -19,8 +19,9 @@
 #
 
 import cv2
-from evaluator import h2l_debug
 import numpy as np
+
+from ..evaluator import h2l_debug
 
 debugger = h2l_debug.h2l_debugger()
 

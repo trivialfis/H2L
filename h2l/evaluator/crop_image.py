@@ -29,10 +29,10 @@ For details on the methodology, see:
 import cv2
 from PIL import Image
 import numpy as np
-from evaluator import h2l_debug
 from scipy.ndimage.filters import rank_filter
 import sys
 
+from . import h2l_debug
 
 debugger = h2l_debug.h2l_debugger()
 

@@ -24,8 +24,9 @@ import numpy as np
 from random import shuffle, randint
 import os
 import pickle
-from normalization import slantCorrect
-from preprocessing.reform import binarize
+
+from ..normalization import slantCorrect
+from .reform import binarize
 
 
 IMAGE_PATH = '../resource/words/'

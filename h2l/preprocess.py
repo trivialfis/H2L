@@ -18,8 +18,8 @@
 # along with H2L.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from preprocessing import characters_preprocess as cp
-from preprocessing import split_collected as sc
+from .preprocessing import characters_preprocess as cp
+from .preprocessing import split_collected as sc
 
 
 def characters():
