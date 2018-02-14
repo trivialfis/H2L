@@ -29,8 +29,8 @@ def split(path):
     pardir = os.path.join(path, os.path.pardir)
     pardir = os.path.normpath(pardir)
 
-    train_dir = os.path.join(pardir, 'train_data')
-    valid_dir = os.path.join(pardir, 'valid_data')
+    train_dir = os.path.join(pardir, config.TRAIN_DATA)
+    valid_dir = os.path.join(pardir, config.VALIDATION_DATA)
     if os.path.exists(train_dir):
         os.system('rm -r ' + train_dir)
     os.mkdir(train_dir)

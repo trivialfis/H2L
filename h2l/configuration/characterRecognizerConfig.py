@@ -20,20 +20,31 @@
 
 import os
 
-ARCHITECTURE_FILE = './models/character_recognizer_architure.json'
-WEIGHTS_FILE = './models/character_recognizer_weights.hdf5'
-VISUAL_FILE = './models/model_plot.png'
-NAME = 'character_recognizer'
-CHARACTER_MAP = './models/characters_map'
 
-SVM_MODEL = './models/characters_svm.pkl'
+def make_path(relative_path):
+    return os.path.join(
+        os.path.normpath(
+            # This join returns configuration dir, not h2l
+            os.path.join(os.path.abspath(__file__), os.path.pardir),
+        ),
+        relative_path
+    )
+
+
+ARCHITECTURE_FILE = make_path('../models/character_recognizer_architure.json')
+WEIGHTS_FILE = make_path('../models/character_recognizer_weights.hdf5')
+VISUAL_FILE = make_path('../models/model_plot.png')
+NAME = 'character_recognizer'
+
+CHARACTER_MAP = make_path('../models/characters_map')
+
+SVM_MODEL = make_path('../models/characters_svm.pkl')
 
 # BATCH_SIZE = 32
 BATCH_SIZE = 16
 # VALIDATION_BATCH_SIZE = 300
 VALIDATION_BATCH_SIZE = 64
 
-CLASS_NUM = 36
 
 INIT_LEARNING_RATE = 2.0
 # INIT_LEARNING_RATE = 0.02
@@ -43,8 +54,10 @@ IMG_ROWS, IMG_COLS = 48, 48
 INPUT_SHAPE = (IMG_ROWS, IMG_COLS, 1)
 
 # Data directories
-TRAIN_DATA = '../resource/training'
-VALIDATION_DATA = '../resource/validation'
+TRAIN_DATA = 'train_data'
+VALIDATION_DATA = 'valid_data'
+
+TV_RATIO = 0.8
 
 
 def modelExists():

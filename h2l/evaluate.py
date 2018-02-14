@@ -25,22 +25,19 @@ from .evaluator import toLaTeX
 from .evaluator import crop_image
 from .evaluator import line_segmenter
 
-from configuration import characterRecognizerConfig as crconfig
-from normalization import image_utils  # , slope_correct
+from .configuration import characterRecognizerConfig as crconfig
+from .normalization import image_utils  # , slope_correct
+
+from .evaluator import h2l_debug
 
 import numpy as np
 import cv2
 
-from evaluator import h2l_debug
 
 import warnings
 warnings.filterwarnings('ignore')
 
 debuging = h2l_debug.h2l_debugger()
-
-hs = heuristicSegmenter.segmenter()
-cr = characterRecognizer.recognizer()
-# cr = character_svm.recognizer()
 
 
 class position_finder(object):
@@ -121,81 +118,102 @@ class position_finder(object):
         return supper_flags, sub_flags
 
 
-def build_equation(line):
+class equation_builder(object):
 
-    def is_symbol(character):
-        result = len(character) > 2 and character[0] != '^' \
-                                                        and character[0] != '_'
-        return result
+    def __init__(self, segmenter, classifier):
+        '''
+        Build an equation from image to string.
 
-    if len(line.shape) != 2:
-        raise ValueError('Expected image with shape (x, y), got ' +
-                         str(line.shape))
-    characterImages = hs.segment(line)
-    characterImages = [im for im in characterImages
-                       if not image_utils.is_low_ratio(im)]
+        segmenter: Used to segment line image into characters.
+        classfier: Used to recognize a character image.
+        '''
+        self.segmenter = segmenter
+        self.classifier = classifier
 
-    if len(characterImages) == 0:
-        debuging.display('Not character found in current line.')
-        return
+    def is_symbol(self, character):
+            result = (len(character) > 2 and
+                      character[0] != '^' and
+                      character[0] != '_')
+            return result
 
-    debuging.display('Got', len(characterImages), 'characters.')
+    def build(self, line):
+        '''
+        Build the equation line.
+        line: Input line image.
 
-    positioner = position_finder(line)
-    superFlag, subFlag = positioner.get_positions(characterImages)
-    count = 0
-    for c in characterImages:
-        debuging.save_img(c, caption='segmented'+str(count))
-        count += 1
-    characterImages = [image_utils.remove_edges(char)
-                       for char in characterImages]
-    kernel = np.ones((2, 2), np.uint8)
-    characterImages = [cv2.morphologyEx(img, cv2.MORPH_OPEN, kernel)
-                       for img in characterImages]
-    characterImages = [cv2.morphologyEx(img, cv2.MORPH_CLOSE, kernel)
-                       for img in characterImages]
-    count = 0
-    for c in characterImages:
-        debuging.save_img(c, caption='morphologyEx'+str(count))
-        count += 1
-    # kernel = np.ones((2, 2), np.uint8)
-    # characterImages = [cv2.erode(char, kernel, iterations=1)
-    #                    for char in characterImages]
-    characterImages = [
-        image_utils.fill_to_size(
-            char,
-            (crconfig.IMG_ROWS, crconfig.IMG_COLS)
-        )
-        for char in characterImages
-    ]
-    count = 0
-    for c in characterImages:
-        debuging.save_img(c, caption='resized'+str(count))
-        count += 1
-    characterImages = [char.reshape(char.shape+(1, ))
-                       for char in characterImages]
-    characterImages = np.array(characterImages, dtype=np.float32)
-    characters = cr.predict(characterImages)
-    debuging.display('Evaluate::build_equation::characters ',
-                     characters)
-    debuging.display('Evaluate::build_equation::length ',
-                     len(characters))
-    equation = ''
-    for i in range(len(characters)):
-        if superFlag[i] and not is_symbol(characters[i]):
-            char = '^' + characters[i] + ' '
-        elif subFlag[i] and not is_symbol(characters[i]) and not characters[i] in [',', '-']:
-            char = '_' + characters[i] + ' '
-        else:
-            char = characters[i] + ' '
-        if is_symbol(char):
-            symbol = '\\' + char
-        else:
-            symbol = char
-        equation += symbol
-    debuging.display('Evaluate::build_equation equation ',
-                     equation)
-    return equation
+        Return: A string representing the equation.
+        '''
+        if len(line.shape) != 2:
+            raise ValueError('Expected image with shape (x, y), got ' +
+                             str(line.shape))
+
+        characterImages = self.segmenter.segment(line)
+        characterImages = [im for im in characterImages
+                           if not image_utils.is_low_ratio(im)]
+
+        if len(characterImages) == 0:
+            debuging.display('Not character found in current line.')
+            return
+
+        debuging.display('Got', len(characterImages), 'characters.')
+
+        positioner = position_finder(line)
+        superFlag, subFlag = positioner.get_positions(characterImages)
+        count = 0
+        for c in characterImages:
+            debuging.save_img(c, caption='segmented'+str(count))
+            count += 1
+        characterImages = [image_utils.remove_edges(char)
+                           for char in characterImages]
+        kernel = np.ones((2, 2), np.uint8)
+        characterImages = [cv2.morphologyEx(img, cv2.MORPH_OPEN, kernel)
+                           for img in characterImages]
+        characterImages = [cv2.morphologyEx(img, cv2.MORPH_CLOSE, kernel)
+                           for img in characterImages]
+        count = 0
+        for c in characterImages:
+            debuging.save_img(c, caption='morphologyEx'+str(count))
+            count += 1
+        # kernel = np.ones((2, 2), np.uint8)
+        # characterImages = [cv2.erode(char, kernel, iterations=1)
+        #                    for char in characterImages]
+        characterImages = [
+            image_utils.fill_to_size(
+                char,
+                (crconfig.IMG_ROWS, crconfig.IMG_COLS)
+            )
+            for char in characterImages
+        ]
+        count = 0
+        for c in characterImages:
+            debuging.save_img(c, caption='resized'+str(count))
+            count += 1
+        characterImages = [char.reshape(char.shape+(1, ))
+                           for char in characterImages]
+        characterImages = np.array(characterImages, dtype=np.float32)
+        characters = cr.predict(characterImages)
+        debuging.display('Evaluate::build_equation::characters ',
+                         characters)
+        debuging.display('Evaluate::build_equation::length ',
+                         len(characters))
+        equation = ''
+        for i in range(len(characters)):
+            if superFlag[i] and not self.is_symbol(characters[i]):
+                char = '^' + characters[i] + ' '
+            elif (subFlag[i] and
+                  not self.is_symbol(characters[i]) and
+                  not characters[i] in [',', '-']):
+                char = '_' + characters[i] + ' '
+            else:
+                char = characters[i] + ' '
+            if self.is_symbol(char):
+                symbol = '\\' + char
+            else:
+                symbol = char
+            equation += symbol
+        debuging.display('Evaluate::build_equation equation ',
+                         equation)
+        return equation
 
 
 def heursiticGenerate(image):
@@ -228,8 +246,13 @@ def heursiticGenerate(image):
         "Evaluate:: Number of line images: ",
         "\033[38;2;255;185;0m" + str(len(lineImages)) + "\033[0m")
     equations = []
+
+    hs = heuristicSegmenter.segmenter()
+    cr = characterRecognizer.recognizer()
+    builder = equation_builder(hs, cr)
+
     for line in lineImages:
-        equations.append(build_equation(line))
+        equations.append(builder.build(line))
     if len(equations) == 0:
         debuging.display('No equation found')
     toLaTeX.transoform(equations)

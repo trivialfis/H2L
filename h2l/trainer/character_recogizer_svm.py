@@ -21,9 +21,10 @@
 from sklearn import svm
 from sklearn.externals import joblib
 import numpy as np
-from data import characters
-from configuration import characterRecognizerConfig as config
-from evaluator import h2l_debug
+
+from ..data import characters
+from ..configuration import characterRecognizerConfig as config
+from ..evaluator import h2l_debug
 
 debugger = h2l_debug.h2l_debugger()
 

@@ -24,8 +24,8 @@ import numpy as np
 import os
 from keras.utils import np_utils, Sequence
 from keras.preprocessing import image as Image
-from configuration import characterRecognizerConfig as config
-from evaluator import h2l_debug
+from ..configuration import characterRecognizerConfig as config
+from ..evaluator import h2l_debug
 
 debuger = h2l_debug.h2l_debugger()
 
@@ -96,12 +96,13 @@ def validationDataLoader():
     return (images, labels)
 
 
-def train_flow(batch_size=config.BATCH_SIZE):
+def train_flow(path=config.TRAIN_DATA, batch_size=config.BATCH_SIZE):
+    "Generate images flow from training data"
     train_datagen = Image.ImageDataGenerator(
         zca_epsilon=None,
     )
     flow = train_datagen.flow_from_directory(
-        config.TRAIN_DATA,
+        path,
         color_mode='grayscale',
         target_size=(config.IMG_ROWS, config.IMG_COLS),
         batch_size=batch_size
@@ -113,12 +114,12 @@ def train_flow(batch_size=config.BATCH_SIZE):
     return flow
 
 
-def validation_flow():
+def validation_flow(path=config.VALIDATION_DATA):
     validation_gen = Image.ImageDataGenerator(
         zca_epsilon=None,
     )
     flow = validation_gen.flow_from_directory(
-        config.VALIDATION_DATA,
+        path,
         color_mode='grayscale',
         target_size=(config.IMG_ROWS, config.IMG_COLS),
         batch_size=config.VALIDATION_BATCH_SIZE

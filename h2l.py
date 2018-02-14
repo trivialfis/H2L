@@ -163,8 +163,21 @@ def gui():
     Gtk.main()
 
 
-def cli():
-    raise NotImplementedError('Cli not implemented.')
+class cli(object):
+    def __init__(args):
+        if args.dataset:
+            self.dataset_path = args.dataset
+        if args.algorithm:
+            self.algorithm = args.algorithm
+
+    def run(image):
+        pass
+
+    def train(data_path):
+        self.data_path = data_path
+        from h2l import train
+        from h2l import data
+        train.train_model(self.dataset_path, self.algorithm)
 
 
 def _require_version(name, version):
@@ -187,9 +200,11 @@ def check_modules():
         raise e
     _require_version("numpy", "1.12.1")
     _require_version("skimage", "0.13.1")
-    _require_version("cv2", "3.3.0.10")
+    _require_version("cv2", "3.3.0")
     _require_version("keras", "2.1.2")
     _require_version("tensorflow", "1.3.1")
+    _require_version("sklearn", "0.19.0")
+    _require_version("pydot", "1.2.4")
     debugger.display("All modules checked, we are safe.")
 
 
@@ -201,9 +216,10 @@ def parse_args():
     args = parser.parse_args()
     if args.dataset:
         from h2l import train
+        train.train_model(args.dataset, args.algorithm)
     else:
         if args.nogui:
-            cli()
+            interface = cli(args)
         else:
             gui()
 

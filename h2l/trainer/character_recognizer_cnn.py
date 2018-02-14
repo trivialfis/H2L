@@ -27,17 +27,17 @@ from keras.models import Model, Sequential
 from keras.callbacks import ModelCheckpoint, LearningRateScheduler
 from keras.utils.vis_utils import plot_model
 
-from data.characters import train_flow, validation_flow
-from configuration import characterRecognizerConfig as config
+from ..data.characters import train_flow, validation_flow
+from ..configuration import characterRecognizerConfig as config
 
-from evaluator import h2l_debug
+from ..evaluator import h2l_debug
 
 import math
 
 debugger = h2l_debug.h2l_debugger()
 
 
-def branchModel():
+def branchModel(num_classes):
     inputLayer = Input(shape=config.INPUT_SHAPE)
 
     minor = Conv2D(
@@ -71,7 +71,7 @@ def branchModel():
     merged = Dense(512, activation='relu', init='uniform')(merged)
     merged = Dropout(0.5)(merged)
     outputLayer = Dense(
-        config.CLASS_NUM,
+        num_classes,
         activation='softmax',
         init='uniform',
         kernel_regularizer=l2(0.01),
@@ -81,7 +81,7 @@ def branchModel():
     return model
 
 
-def sequentialModel():
+def sequentialModel(num_classes):
     model = Sequential()
     model.add(ZeroPadding2D(
         input_shape=config.INPUT_SHAPE,
@@ -114,7 +114,7 @@ def sequentialModel():
     model.add(Dense(256, activation='relu'))
     model.add(Dense(128, activation='relu'))
     model.add(Dropout(0.5))
-    model.add(Dense(config.CLASS_NUM,
+    model.add(Dense(num_classes,
                     kernel_regularizer=l2(0.01),
                     activity_regularizer=l2(0.01),
                     kernel_initializer='uniform'))
@@ -123,23 +123,10 @@ def sequentialModel():
 
 
 class trainer(object):
-    def __init__(self):
-        if config.modelExists():
-            with open(config.ARCHITECTURE_FILE, 'r') as a:
-                self.model = models.model_from_json(a.read())
-            self.model.load_weights(config.WEIGHTS_FILE)
-            debugger.display(config.NAME + ' initialized from file.')
-        else:
-            # self.model = branchModel()
-            self.model = sequentialModel()
-            with open(config.ARCHITECTURE_FILE, 'w') as jsonFile:
-                architecture = self.model.to_json()
-                print(architecture, file=jsonFile)
-                plot_model(self.model, to_file=config.VISUAL_FILE,
-                           show_shapes=True, show_layer_names=True)
-                debugger.display(config.NAME + ' saved to file.')
 
-        self.train_flow = train_flow()
+    def __init__(self, data_flow):
+
+        self.train_flow = data_flow['train']
         mapping = self.train_flow.class_indices
         mapping = dict((v, k) for k, v in mapping.items())
         with open(config.CHARACTER_MAP, 'w') as f:
@@ -147,10 +134,25 @@ class trainer(object):
         samples_per_epoch = self.train_flow.samples
         self.steps_per_epoch = samples_per_epoch // config.BATCH_SIZE
 
-        self.validation_flow = validation_flow()
+        self.validation_flow = data_flow['valid']
         validation_samples = self.validation_flow.samples
         batch_size_validation = config.VALIDATION_BATCH_SIZE
         self.validation_steps = validation_samples // batch_size_validation
+
+        if config.modelExists():
+            with open(config.ARCHITECTURE_FILE, 'r') as a:
+                self.model = models.model_from_json(a.read())
+            self.model.load_weights(config.WEIGHTS_FILE)
+            debugger.display(config.NAME + ' initialized from file.')
+        else:
+            # self.model = branchModel()
+            self.model = sequentialModel(self.train_flow.num_classes)
+            with open(config.ARCHITECTURE_FILE, 'w') as jsonFile:
+                architecture = self.model.to_json()
+                print(architecture, file=jsonFile)
+                plot_model(self.model, to_file=config.VISUAL_FILE,
+                           show_shapes=True, show_layer_names=True)
+                debugger.display(config.NAME + ' saved to file.')
 
         self.model.compile(loss='categorical_crossentropy',
                            optimizer=Adadelta(),
