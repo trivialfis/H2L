@@ -21,3 +21,4 @@ doc/notes
 *.hdf5
 *~
 *.tex
+*.egg-info
