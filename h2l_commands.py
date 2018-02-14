@@ -36,5 +36,5 @@ Example:
     )
     args = parser.parse_args()
     if args.split_data:
-        from h2l.preprocessing.split_dataset import split
+        from H2L.preprocessing.split_dataset import split
         split(sys.argv[2])

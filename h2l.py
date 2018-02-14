@@ -23,7 +23,7 @@ import cv2
 import sys
 import argparse
 from distutils.version import LooseVersion
-from h2l.evaluator import h2l_debug
+from H2L.evaluator import h2l_debug
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk, GLib, Gio
@@ -93,7 +93,7 @@ class H2L_WINDOW(Gtk.ApplicationWindow):
 
         dialog.destroy()
 
-        from h2l.evaluate import heursiticGenerate
+        from H2L.evaluate import heursiticGenerate
         print('filename confirm: ', filename)
         image = cv2.imread(filename)
         heursiticGenerate(image)
@@ -175,8 +175,8 @@ class cli(object):
 
     def train(data_path):
         self.data_path = data_path
-        from h2l import train
-        from h2l import data
+        from H2L import train
+        from H2L import data
         train.train_model(self.dataset_path, self.algorithm)
 
 
@@ -194,7 +194,7 @@ def _require_version(name, version):
 
 def check_modules():
     try:
-        from h2l.evaluate import heursiticGenerate
+        from H2L.evaluate import heursiticGenerate
     except ModuleNotFoundError as e:
         print('Self import failed', file=sys.stderr)
         raise e
@@ -202,7 +202,7 @@ def check_modules():
     _require_version("skimage", "0.13.1")
     _require_version("cv2", "3.3.0")
     _require_version("keras", "2.1.2")
-    _require_version("tensorflow-gpu", "1.3.1")
+    _require_version("tensorflow", "1.3.1")
     _require_version("sklearn", "0.19.0")
     _require_version("pydot", "1.2.4")
     debugger.display("All modules checked, we are safe.")
@@ -215,7 +215,7 @@ def parse_args():
     parser.add_argument('--nogui', type=bool, help='Run as command.')
     args = parser.parse_args()
     if args.dataset:
-        from h2l import train
+        from H2L import train
         train.train_model(args.dataset, args.algorithm)
     else:
         if args.nogui:

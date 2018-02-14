@@ -20,7 +20,7 @@
 
 import unittest
 import os
-from h2l.configuration import characterRecognizerConfig as config
+from H2L.configuration import characterRecognizerConfig as config
 
 
 class test_config(unittest.TestCase):
@@ -31,4 +31,4 @@ class test_config(unittest.TestCase):
             # .. removes file name only, doesn't cd to upper dir.
             os.path.normpath(
                 os.path.join(os.path.abspath(__file__),
-                             '../../h2l/models/characters_map')))
+                             '../../H2L/models/characters_map')))
