@@ -191,7 +191,7 @@ class equation_builder(object):
         characterImages = [char.reshape(char.shape+(1, ))
                            for char in characterImages]
         characterImages = np.array(characterImages, dtype=np.float32)
-        characters = cr.predict(characterImages)
+        characters = self.classifier.predict(characterImages)
         debuging.display('Evaluate::build_equation::characters ',
                          characters)
         debuging.display('Evaluate::build_equation::length ',
