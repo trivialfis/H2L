@@ -198,13 +198,15 @@ def check_modules():
     except ModuleNotFoundError as e:
         print('Self import failed', file=sys.stderr)
         raise e
-    _require_version("numpy", "1.12.1")
-    _require_version("skimage", "0.13.1")
-    _require_version("cv2", "3.3.0")
-    _require_version("keras", "2.1.2")
-    _require_version("tensorflow", "1.3.1")
-    _require_version("sklearn", "0.19.0")
-    _require_version("pydot", "1.2.4")
+    _require_version('numpy', '1.12.1')
+    _require_version('skimage', '0.13.1')
+    _require_version('sklearn', '0.19.0')
+    _require_version('cv2', '3.3.0')
+    _require_version('keras', '2.1.2')
+    _require_version('tensorflow', '1.2.1')
+    _require_version('pydot', '1.2.4')
+    _require_version('h5py', '2.7.0')
+    _require_version('tqdm', '4.19.5')
     debugger.display("All modules checked, we are safe.")
 
 
