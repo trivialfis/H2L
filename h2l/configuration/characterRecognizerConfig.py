@@ -22,12 +22,8 @@ import os
 
 
 def make_path(relative_path):
-    return os.path.join(
-        os.path.normpath(
-            # This join returns configuration dir, not h2l
-            os.path.join(os.path.abspath(__file__), os.path.pardir),
-        ),
-        relative_path
+    return os.path.normpath(
+        os.path.join(os.path.abspath(__file__), os.path.pardir, relative_path)
     )
 
 
@@ -40,14 +36,11 @@ CHARACTER_MAP = make_path('../models/characters_map')
 
 SVM_MODEL = make_path('../models/characters_svm.pkl')
 
-# BATCH_SIZE = 32
 BATCH_SIZE = 16
-# VALIDATION_BATCH_SIZE = 300
 VALIDATION_BATCH_SIZE = 64
 
 
 INIT_LEARNING_RATE = 2.0
-# INIT_LEARNING_RATE = 0.02
 EPOCH = 3
 
 IMG_ROWS, IMG_COLS = 48, 48

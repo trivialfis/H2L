@@ -26,16 +26,15 @@ import cv2
 import os
 import pickle
 from . import reform
-from ..configuration import characterRecognizerConfig as config
 
-from evaluator import h2l_debug
+from ..evaluator import h2l_debug
 
 debugger = h2l_debug.h2l_debugger()
 
 IMAGES_PATH = '../resource/characters/'
 TARGET_FILE = '../resource/characters_pkl/characters'
 VALIDATION_FILE = '../resource/characters_pkl/validation.pkl'
-TASK_NUM = config.FILES_COUNT
+TASK_NUM = 8
 HEIGHT = 48
 VALIDATION_SIZE = 500
 

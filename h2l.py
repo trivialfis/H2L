@@ -202,7 +202,7 @@ def check_modules():
     _require_version("skimage", "0.13.1")
     _require_version("cv2", "3.3.0")
     _require_version("keras", "2.1.2")
-    _require_version("tensorflow", "1.3.1")
+    _require_version("tensorflow-gpu", "1.3.1")
     _require_version("sklearn", "0.19.0")
     _require_version("pydot", "1.2.4")
     debugger.display("All modules checked, we are safe.")

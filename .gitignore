@@ -13,6 +13,7 @@ doc/notes
 *.gz
 
 # temp
+*.pytest_cache
 *.log
 *.aux
 *.pyc
