@@ -17,6 +17,9 @@ setup(
         'numpy>=1.12.1', 'tensorflow-gpu>=1.2.1', 'tqdm',
         'opencv-python>=3.3.0', 'keras>=2.1.2', 'scikit-learn>=0.19.0',
         'pydot>=1.2.4'],
+    extra_require={
+        'tests': ['pytest']
+    },
     description=("Experment project for recognizing math equations."),
     long_description=read('README.org'),
     project_urls={
