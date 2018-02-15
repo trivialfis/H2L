@@ -184,7 +184,8 @@ def _require_version(name, version):
     try:
         local_version = __import__(name).__version__
     except ImportError as e:
-        print('Import', name, 'failed, make sure you have it installed')
+        debugger.display(
+            'Import', name, 'failed, make sure you have it installed')
         raise e
     if LooseVersion(local_version) < LooseVersion(version):
         raise ValueError(
@@ -198,15 +199,10 @@ def check_modules():
     except ModuleNotFoundError as e:
         print('Self import failed', file=sys.stderr)
         raise e
-    _require_version('numpy', '1.12.1')
-    _require_version('skimage', '0.13.1')
-    _require_version('sklearn', '0.19.0')
-    _require_version('cv2', '3.3.0')
-    _require_version('keras', '2.1.2')
-    _require_version('tensorflow', '1.2.1')
-    _require_version('pydot', '1.2.4')
-    _require_version('h5py', '2.7.0')
-    _require_version('tqdm', '4.19.5')
+    from H2L.configuration import dependencies as deps
+    runtime_deps = deps.run_time(deps.H2L_DEPENDENCIES)
+    for d in runtime_deps:
+        _require_version(d[0], d[1])
     debugger.display("All modules checked, we are safe.")
 
 
