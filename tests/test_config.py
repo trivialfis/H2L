@@ -18,17 +18,30 @@
 # along with H2L.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-import unittest
 import os
-from H2L.configuration import characterRecognizerConfig as config
+from H2L.configuration import characterRecognizerConfig as cc
+from H2L.configuration import dependencies as depsc
 
 
-class test_config(unittest.TestCase):
+dummpy_deps = ((('scikit-learn', 'sklearn'), '0.19'),
+               (('scikit-image', 'skimage'), '0.12'))
 
-    def test_make_path(self):
-        self.assertEqual(
-            config.make_path('../models/characters_map'),
+
+def test_make_path():
+    assert (cc.make_path('../models/characters_map') ==
             # .. removes file name only, doesn't cd to upper dir.
             os.path.normpath(
                 os.path.join(os.path.abspath(__file__),
                              '../../H2L/models/characters_map')))
+
+
+def test_build_time():
+    assert (depsc.build_time(dummpy_deps) ==
+            (('scikit-learn', '0.19'),
+             ('scikit-image', '0.12')))
+
+
+def test_run_time():
+    assert (depsc.run_time(dummpy_deps) ==
+            (('sklearn', '0.19'),
+             ('skimage', '0.12')))
