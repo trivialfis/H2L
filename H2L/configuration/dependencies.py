@@ -27,7 +27,8 @@ H2L_DEPENDENCIES = (
     (('tensorflow-gpu', 'tensorflow'), '1.2.1'),
     (('pydot', 'pydot'), '1.2.0'),
     (('h5py', 'h5py'), '2.7.0'),
-    (('tqdm', 'tqdm'), '4.19.5'))
+    (('tqdm', 'tqdm'), '4.19.5'),
+    (('pyparsing', 'pyparsing'), '2.2.0'))
 
 
 def _construct(dep, index):

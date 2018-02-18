@@ -59,12 +59,12 @@ class H2L_WINDOW(Gtk.ApplicationWindow):
 
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
-            print('Open clicked')
+            debugger.display('Open clicked')
             filename = dialog.get_filename()
-            print('filename: ', filename)
+            debugger.display('filename: ', filename)
         elif response == Gtk.ResponseType.CANCEL:
             filename = None
-            print('Cancel clicked')
+            debugger.display('Cancel clicked')
         dialog.destroy()
 
         if filename is not None:
