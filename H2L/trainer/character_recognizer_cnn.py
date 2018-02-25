@@ -56,8 +56,8 @@ class trainer(object):
                 self.model, self.paras = sequentialModel(
                     self.train_flow.num_classes)
             elif config.ALGORITHM == 'res':
-                from .resnet import res50
-                self.model, self.paras = res50(self.train_flow.num_classes)
+                from .resnet import res32
+                self.model, self.paras = res32(self.train_flow.num_classes)
 
             with open(config.ARCHITECTURE_FILE, 'w') as jsonFile:
                 architecture = self.model.to_json()
