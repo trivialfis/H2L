@@ -34,7 +34,17 @@ located at the same level as the input dir.
 Example:
         h2l_commands --split_data ../data/pngs/'''
     )
+    parser.add_argument(
+        '--binarize_data', type=str,
+        help='''Binarize all images in the dataset, output dir will be located
+at the same level as the input dir.
+Example:
+        h2l_commands --binarize_data ../data/pngs'''
+    )
     args = parser.parse_args()
     if args.split_data:
-        from H2L.preprocessing.split_dataset import split
+        from H2L.preprocessing.dataset import split
         split(sys.argv[2])
+    elif args.binarize_data:
+        from H2L.preprocessing.dataset import binarize
+        binarize(sys.argv[2])

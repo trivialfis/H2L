@@ -20,8 +20,19 @@
 
 import os
 from ..configuration import characterRecognizerConfig as config
+from ..normalization import image_utils
 from shutil import copyfile
+import cv2
 import sys
+from tqdm import tqdm
+
+
+def remove_data_comfirm(path):
+    confirm = input('Remove old data from '+path+' [y/N]: ')
+    if confirm.lower() == 'y':
+        return True
+    else:
+        return False
 
 
 def split(path):
@@ -32,11 +43,17 @@ def split(path):
     train_dir = os.path.join(pardir, config.TRAIN_DATA)
     valid_dir = os.path.join(pardir, config.VALIDATION_DATA)
     if os.path.exists(train_dir):
-        os.system('rm -r ' + train_dir)
+        if remove_data_comfirm(train_dir):
+            os.system('rm -r ' + train_dir)
+        else:
+            return -1
     os.mkdir(train_dir)
 
     if os.path.exists(valid_dir):
-        os.system('rm -r ' + valid_dir)
+        if remove_data_comfirm(valid_dir):
+            os.system('rm -r ' + valid_dir)
+        else:
+            return -1
     os.mkdir(valid_dir)
     symbols = os.listdir(path)
 
@@ -62,6 +79,39 @@ def split(path):
             src = os.path.join(sym_path, img)
             dst = os.path.join(dst_valid_sym_path, img)
             copyfile(src, dst)
+
+
+def binarize(path):
+    os.listdir(os.path.abspath(path))
+    pardir = os.path.join(path, os.path.pardir)
+    pardir = os.path.normpath(pardir)
+    # dir at the same level of input dir.
+    output_dir = os.path.join(pardir, 'binarized')
+    if os.path.exists(output_dir):
+        if remove_data_comfirm(output_dir):
+            os.system('rm -rf ' + output_dir)
+        else:
+            return 0
+    os.mkdir(output_dir)
+    filepaths = []
+    for root, dirs, files in os.walk(path):
+        names = [os.path.join(root, name) for name in files]
+        filepaths.extend(names)
+
+    bar = tqdm(total=len(filepaths) // 10, unit='x10 images')
+    for i, input_path in enumerate(filepaths):
+        # the file path using path as root, e.g. subdirs.
+        relpath = os.path.relpath(input_path, path)
+        out_path = os.path.join(output_dir, relpath)
+        out_dir = os.path.dirname(out_path)
+        if not os.path.exists(out_dir):
+            os.mkdir(out_dir)
+        image = cv2.imread(input_path, 0)
+        image = image_utils.binarize2d_inv(image)
+        cv2.imwrite(out_path, image)
+        if i % 10 == 0:
+            bar.update(1)
+    bar.close()
 
 
 if __name__ == '__main__':
