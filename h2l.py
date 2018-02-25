@@ -164,7 +164,7 @@ def gui():
 
 
 class cli(object):
-    def __init__(args):
+    def __init__(self, args):
         if args.dataset:
             self.dataset_path = args.dataset
         if args.algorithm:
@@ -173,10 +173,9 @@ class cli(object):
     def run(image):
         pass
 
-    def train(data_path):
+    def train(self, data_path):
         self.data_path = data_path
         from H2L import train
-        from H2L import data
         train.train_model(self.dataset_path, self.algorithm)
 
 
