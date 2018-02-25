@@ -24,6 +24,7 @@ import sys
 import argparse
 from distutils.version import LooseVersion
 from H2L.evaluator import h2l_debug
+import H2L.configuration.characterRecognizerConfig as config
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk, GLib, Gio
@@ -208,12 +209,15 @@ def check_modules():
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--dataset', type=str, help='Dataset for training.')
-    parser.add_argument('--algorithm', type=str, help='Algorithm used')
+    parser.add_argument(
+        '--algorithm', type=str, help='Algorithm used: svm, cnn, res')
     parser.add_argument('--nogui', type=bool, help='Run as command.')
     args = parser.parse_args()
+
+    config.set_algorithm(args.algorithm)
     if args.dataset:
         from H2L import train
-        train.train_model(args.dataset, args.algorithm)
+        train.train_model(args.dataset)
     else:
         if args.nogui:
             interface = cli(args)

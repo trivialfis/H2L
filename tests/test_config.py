@@ -45,3 +45,10 @@ def test_run_time():
     assert (depsc.run_time(dummpy_deps) ==
             (('sklearn', '0.19'),
              ('skimage', '0.12')))
+
+
+def test_set_algorithm():
+    cc.set_algorithm('cnn')
+    assert (type(cc.WEIGHTS_FILE) is not None and
+            cc.ALGORITHM == 'cnn' and
+            type(cc.VISUAL_FILE) is not None)

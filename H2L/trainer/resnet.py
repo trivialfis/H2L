@@ -17,7 +17,8 @@
 # You should have received a copy of the GNU General Public License
 # along with H2L.  If not, see <http://www.gnu.org/licenses/>.
 #
-# from ..configuration import characterRecognizerConfig as config
+
+from ..configuration import characterRecognizerConfig as config
 import keras.backend as K
 from keras.layers import (Conv2D, BatchNormalization, Activation, Layer, Input,
                           MaxPooling2D, AveragePooling2D, Flatten, Dense)
@@ -153,12 +154,18 @@ class Identity_Block(Layer):
         return input_shape
 
 
-def res50(num_classes, input_shape):
+def res50(num_classes):
+
+    paras = {
+        'valid_batch_size': 32,
+        'batch_size': 16
+    }
 
     if K.image_data_format() == 'channels_last':
         bn_axis = 3
     else:
         bn_axis = 1
+    input_shape = config.INPUT_SHAPE
     img_input = Input(shape=input_shape)
     x = Conv2D(
         64, (7, 7), strides=(2, 2), padding='same', name='conv1')(img_input)
@@ -166,25 +173,25 @@ def res50(num_classes, input_shape):
     x = Activation('relu')(x)
     x = MaxPooling2D((3, 3), strides=(2, 2))(x)
 
-    x = Conv_Block(3, [64, 64, 256], stage=2, block='a', strides=(1, 1))
-    x = Identity_Block(3, [64, 64, 256], stage=2, block='b')
-    x = Identity_Block(3, [64, 64, 256], stage=2, block='c')
+    x = Conv_Block(3, [64, 64, 256], stage=2, block='a', strides=(1, 1))(x)
+    x = Identity_Block(3, [64, 64, 256], stage=2, block='b')(x)
+    x = Identity_Block(3, [64, 64, 256], stage=2, block='c')(x)
 
-    x = Conv_Block(3, [128, 128, 512], stage=3, block='a')
-    x = Identity_Block(3, [128, 128, 512], stage=3, block='b')
-    x = Identity_Block(3, [128, 128, 512], stage=3, block='c')
-    x = Identity_Block(3, [128, 128, 512], stage=3, block='d')
+    x = Conv_Block(3, [128, 128, 512], stage=3, block='a')(x)
+    x = Identity_Block(3, [128, 128, 512], stage=3, block='b')(x)
+    x = Identity_Block(3, [128, 128, 512], stage=3, block='c')(x)
+    x = Identity_Block(3, [128, 128, 512], stage=3, block='d')(x)
 
-    x = Conv_Block(3, [256, 256, 1024], stage=4, block='a')
-    x = Identity_Block(3, [256, 256, 1024], stage=4, block='b')
-    x = Identity_Block(3, [256, 256, 1024], stage=4, block='c')
-    x = Identity_Block(3, [256, 256, 1024], stage=4, block='d')
-    x = Identity_Block(3, [256, 256, 1024], stage=4, block='e')
-    x = Identity_Block(3, [256, 256, 1024], stage=4, block='f')
+    x = Conv_Block(3, [256, 256, 1024], stage=4, block='a')(x)
+    x = Identity_Block(3, [256, 256, 1024], stage=4, block='b')(x)
+    x = Identity_Block(3, [256, 256, 1024], stage=4, block='c')(x)
+    x = Identity_Block(3, [256, 256, 1024], stage=4, block='d')(x)
+    x = Identity_Block(3, [256, 256, 1024], stage=4, block='e')(x)
+    x = Identity_Block(3, [256, 256, 1024], stage=4, block='f')(x)
 
-    x = Conv_Block(3, [512, 512, 2048], stage=5, block='a')
-    x = Identity_Block(3, [512, 512, 2048], stage=5, block='b')
-    x = Identity_Block(3, [512, 512, 2048], stage=5, block='c')
+    x = Conv_Block(3, [512, 512, 2048], stage=5, block='a')(x)
+    x = Identity_Block(3, [512, 512, 2048], stage=5, block='b')(x)
+    x = Identity_Block(3, [512, 512, 2048], stage=5, block='c')(x)
 
     x = AveragePooling2D((7, 7), name='avg_pool')(x)
     x = Flatten()(x)
@@ -192,4 +199,4 @@ def res50(num_classes, input_shape):
 
     model = Model(img_input, x, name='resnet50')
 
-    return model
+    return model, paras

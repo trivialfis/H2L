@@ -19,17 +19,30 @@
 #
 
 import os
+import sys
 
 
 def make_path(relative_path):
     return os.path.normpath(
-        os.path.join(os.path.abspath(__file__), os.path.pardir, relative_path)
-    )
+        os.path.join(os.path.abspath(__file__), os.path.pardir, relative_path))
 
 
-ARCHITECTURE_FILE = make_path('../models/character_recognizer_architure.json')
-WEIGHTS_FILE = make_path('../models/character_recognizer_weights.hdf5')
-VISUAL_FILE = make_path('../models/model_plot.png')
+__h2l_config__ = sys.modules[__name__]
+
+
+def set_algorithm(algorithm):
+    setattr(__h2l_config__, 'ALGORITHM', algorithm)
+    setattr(__h2l_config__, 'ARCHITECTURE_FILE',
+            make_path('../models/character_' + __h2l_config__.ALGORITHM +
+                      '_architure.json'))
+    setattr(__h2l_config__, 'WEIGHTS_FILE',
+            make_path('../models/character_' + __h2l_config__.ALGORITHM +
+                      '_weights.hdf5'))
+    setattr(
+        __h2l_config__, 'VISUAL_FILE',
+        make_path('../models/model_' + __h2l_config__.ALGORITHM + '_plot.png'))
+
+
 NAME = 'character_recognizer'
 
 CHARACTER_MAP = make_path('../models/characters_map')
@@ -38,7 +51,6 @@ SVM_MODEL = make_path('../models/characters_svm.pkl')
 
 BATCH_SIZE = 16
 VALIDATION_BATCH_SIZE = 64
-
 
 INIT_LEARNING_RATE = 2.0
 EPOCH = 3
@@ -54,8 +66,8 @@ TV_RATIO = 0.8
 
 
 def modelExists():
-    weightsExists = os.path.exists(WEIGHTS_FILE)
-    architectureExists = os.path.exists(ARCHITECTURE_FILE)
+    weightsExists = os.path.exists(__h2l_config__.WEIGHTS_FILE)
+    architectureExists = os.path.exists(__h2l_config__.ARCHITECTURE_FILE)
     return weightsExists and architectureExists
 
 

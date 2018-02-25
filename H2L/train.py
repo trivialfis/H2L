@@ -67,14 +67,15 @@ def parse_path(path):
     return train_path, valid_path
 
 
-def train_model(path, model_name):
+def train_model(path):
     train_path, valid_path = parse_path(path)
-    if model_name == 'svm':
+    if config.ALGORITHM == 'svm':
         train_character_svm()
-    elif model_name == 'cnn':
+    elif config.ALGORITHM == 'cnn' or config.ALGORITHM == 'res':
+        # Keras models should be all handled by a single trainer.
         train_character_cnn(train_path, valid_path)
     else:
-        raise ValueError(model_name, ' not known.')
+        raise ValueError(config.ALGORITHM, ' not known.')
 
 
 if __name__ == '__main__':

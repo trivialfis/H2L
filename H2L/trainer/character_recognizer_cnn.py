@@ -18,108 +18,18 @@
 # along with H2L.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from keras.layers import Dense, Dropout, Flatten, merge, Input
-from keras.layers import Conv2D, MaxPooling2D, ZeroPadding2D, Activation
-from keras.regularizers import l2
 from keras.optimizers import Adadelta
 from keras import models
-from keras.models import Model, Sequential
+
 from keras.callbacks import ModelCheckpoint, LearningRateScheduler
 from keras.utils.vis_utils import plot_model
 
-from ..data.characters import train_flow, validation_flow
 from ..configuration import characterRecognizerConfig as config
-
 from ..evaluator import h2l_debug
 
 import math
 
 debugger = h2l_debug.h2l_debugger()
-
-
-def branchModel(num_classes):
-    inputLayer = Input(shape=config.INPUT_SHAPE)
-
-    minor = Conv2D(
-        16, 5, 5, padding='same',
-        activation='relu',
-        init='uniform'
-    )(inputLayer)
-    minor = MaxPooling2D(pool_size=(2, 2))(minor)
-    minor = Conv2D(
-        32, 3, 3, padding='same',
-        activation='relu',
-        init='uniform'
-    )(minor)
-    minor = MaxPooling2D(pool_size=(2, 2))(minor)
-    minor = Flatten()(minor)
-
-    large = Conv2D(
-        16, 8, 8, padding='same',
-        activation='relu',
-    )(inputLayer)
-    large = MaxPooling2D(pool_size=(8, 8))(large)
-    large = Flatten()(large)
-
-    merged = merge([minor, large], mode='concat')
-    merged = Dense(1024,
-                   W_regularizer=l2(0.01),
-                   init='uniform',
-                   activity_regularizer=l2(0.01),
-                   activation='relu')(merged)
-    # merged = Dropout(0.25)(merged)
-    merged = Dense(512, activation='relu', init='uniform')(merged)
-    merged = Dropout(0.5)(merged)
-    outputLayer = Dense(
-        num_classes,
-        activation='softmax',
-        init='uniform',
-        kernel_regularizer=l2(0.01),
-        activity_regularizer=l2(0.01)
-    )(merged)
-    model = Model(input=inputLayer, output=outputLayer)
-    return model
-
-
-def sequentialModel(num_classes):
-    model = Sequential()
-    model.add(ZeroPadding2D(
-        input_shape=config.INPUT_SHAPE,
-        padding=((4, 4), (4, 4))
-    ))
-    model.add(Conv2D(
-        filters=64, kernel_size=(5, 5),
-        padding='same',
-        activation='relu',
-        kernel_regularizer=l2(0.01),
-        # activity_regularizer=l2(0.01)
-    ))
-    model.add(Conv2D(
-        filters=64, kernel_size=(3, 3),
-        padding='same',
-        activation='relu',
-        kernel_regularizer=l2(0.01),
-        # activity_regularizer=l2(0.01)
-    ))
-    model.add(MaxPooling2D(pool_size=(2, 2), padding='same'))
-    model.add(Conv2D(
-        filters=32, kernel_size=(2, 2),
-        padding='valid',
-        activation='relu',
-        kernel_regularizer=l2(0.01),
-        # activity_regularizer=l2(0.01)
-    ))
-    model.add(MaxPooling2D(pool_size=(2, 2), padding='same'))
-    model.add(Flatten())
-    model.add(Dense(256, activation='relu'))
-    model.add(Dense(128, activation='relu'))
-    model.add(Dropout(0.5))
-    model.add(Dense(num_classes,
-                    kernel_regularizer=l2(0.01),
-                    activity_regularizer=l2(0.01),
-                    kernel_initializer='uniform'))
-    model.add(Activation('softmax'))
-    return model
 
 
 class trainer(object):
@@ -132,12 +42,8 @@ class trainer(object):
         with open(config.CHARACTER_MAP, 'w') as f:
             f.write(str(mapping))
         samples_per_epoch = self.train_flow.samples
-        self.steps_per_epoch = samples_per_epoch // config.BATCH_SIZE
 
         self.validation_flow = data_flow['valid']
-        validation_samples = self.validation_flow.samples
-        batch_size_validation = config.VALIDATION_BATCH_SIZE
-        self.validation_steps = validation_samples // batch_size_validation
 
         if config.modelExists():
             with open(config.ARCHITECTURE_FILE, 'r') as a:
@@ -145,14 +51,25 @@ class trainer(object):
             self.model.load_weights(config.WEIGHTS_FILE)
             debugger.display(config.NAME + ' initialized from file.')
         else:
-            # self.model = branchModel()
-            self.model = sequentialModel(self.train_flow.num_classes)
+            if config.ALGORITHM == 'cnn':
+                from .cnns import sequentialModel
+                self.model, self.paras = sequentialModel(
+                    self.train_flow.num_classes)
+            elif config.ALGORITHM == 'res':
+                from .resnet import res50
+                self.model, self.paras = res50(self.train_flow.num_classes)
+
             with open(config.ARCHITECTURE_FILE, 'w') as jsonFile:
                 architecture = self.model.to_json()
                 print(architecture, file=jsonFile)
                 plot_model(self.model, to_file=config.VISUAL_FILE,
                            show_shapes=True, show_layer_names=True)
                 debugger.display(config.NAME + ' saved to file.')
+
+        validation_samples = self.validation_flow.samples
+        batch_size_validation = self.paras['valid_batch_size']
+        self.steps_per_epoch = samples_per_epoch // self.paras['batch_size']
+        self.validation_steps = validation_samples // batch_size_validation
 
         self.model.compile(loss='categorical_crossentropy',
                            optimizer=Adadelta(),
