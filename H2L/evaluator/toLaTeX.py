@@ -30,9 +30,14 @@ EQ_E = "\n\\end{equation}\n"
 
 
 def transoform(equations):
-    if os.path.exists('result.tex'):
-        os.remove('result.tex')
-    f = open('result.tex', 'a')
+
+    outdir = os.path.expanduser('~/Downloads/h2l')
+    if not os.path.exists(outdir):
+        os.mkdir(outdir)
+    outfile = os.path.join(outdir, 'result.tex')
+    if os.path.exists(outfile):
+        os.remove(outfile)
+    f = open(outfile, 'a')
     f.write(HEAD)
     for eq in equations:
         temp = EQ_B + eq + EQ_E
@@ -43,6 +48,6 @@ def transoform(equations):
         subprocess.run(['pdflatex', 'result.tex'], stdout=subprocess.PIPE)
     except KeyboardInterrupt:
         print('Interrupted')
-    except:
+    except Exception:
         print("pdflatex command not found. Please install pdflatex",
               " and make sure it's in the system path")
