@@ -20,6 +20,9 @@
 
 import subprocess
 import os
+from ..evaluator import h2l_debug
+
+debugger = h2l_debug.h2l_debugger()
 
 HEAD = "\\documentclass[a4paper, 11pt]{article}\n" + \
        "\\usepackage{amsmath, amssymb}\n" + \
@@ -29,9 +32,9 @@ EQ_B = "\\begin{equation}\n"
 EQ_E = "\n\\end{equation}\n"
 
 
-def transoform(equations):
+def transoform(equations, path='~/Downloads/h2l'):
 
-    outdir = os.path.expanduser('~/Downloads/h2l')
+    outdir = os.path.expanduser(path)
     if not os.path.exists(outdir):
         os.mkdir(outdir)
     outfile = os.path.join(outdir, 'result.tex')
@@ -44,8 +47,12 @@ def transoform(equations):
         f.write(temp)
     f.write(TAIL)
     f.close()
+    debugger.display('outdir:', outdir)
     try:
-        subprocess.run(['pdflatex', 'result.tex'], stdout=subprocess.PIPE)
+        # Parameters must come before input file.
+        subprocess.run(
+            ['pdflatex', '-output-directory', outdir, outfile],
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     except KeyboardInterrupt:
         print('Interrupted')
     except Exception:
