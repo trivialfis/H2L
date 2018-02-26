@@ -95,7 +95,6 @@ class H2L_WINDOW(Gtk.ApplicationWindow):
         dialog.destroy()
 
         from H2L.evaluate import heursiticGenerate
-        print('filename confirm: ', filename)
         image = cv2.imread(filename)
         heursiticGenerate(image)
 

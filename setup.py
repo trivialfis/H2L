@@ -5,6 +5,7 @@ from H2L.configuration import dependencies as deps
 build_dependencies = deps.build_time(deps.H2L_DEPENDENCIES)
 dependencies_list = [dep[0] + '>=' + dep[1] for dep in build_dependencies]
 
+
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 

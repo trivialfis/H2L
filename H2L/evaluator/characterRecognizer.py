@@ -33,13 +33,37 @@ class recognizer(object):
             with open(config.ARCHITECTURE_FILE, 'r') as a:
                 self.model = models.model_from_json(a.read())
                 self.model.load_weights(config.WEIGHTS_FILE)
-                debugger.display('recognizer:\n',
-                                 config.NAME, 'initialized from file.')
+                debugger.display('recognizer:\n', config.NAME,
+                                 'initialized from file.')
             with open(config.CHARACTER_MAP, 'r') as mapFile:
                 mapString = mapFile.read()
                 self.charactersMap = eval(mapString)
         else:
             sys.exit('No weight file or json file found')
+
+    def predict_classes(self, x, batch_size=None, verbose=0, steps=None):
+        """Generate class predictions for the input samples.
+
+        The input samples are processed batch by batch.
+
+        # Arguments
+            x: input data, as a Numpy array or list of Numpy arrays
+                (if the model has multiple inputs).
+            batch_size: Integer. If unspecified, it will default to 32.
+            verbose: verbosity mode, 0 or 1.
+            steps: Total number of steps (batches of samples)
+                before declaring the prediction round finished.
+                Ignored with the default value of `None`.
+
+        # Returns
+            A numpy array of class predictions.
+        """
+        proba = self.model.predict(
+            x, batch_size=batch_size, verbose=verbose, steps=steps)
+        if proba.shape[-1] > 1:
+            return proba.argmax(axis=-1)
+        else:
+            return (proba > 0.5).astype('int32')
 
     def predictCharacter(self, img):
         result = self.model.predict(img, batch_size=1, verbose=False)
@@ -47,15 +71,19 @@ class recognizer(object):
         return result
 
     def predict(self, images):
-        classCode = list(self.model.predict_classes(images,
-                                                    batch_size=len(images),
-                                                    verbose=False))
-        characters = [self.charactersMap[code] for code in classCode]
+        if hasattr(self.model, 'predict_classes'):
+            class_code = list(
+                self.model.predict_classes(
+                    images, batch_size=len(images), verbose=False))
+        else:
+            class_code = list(
+                self.predict_classes(
+                    images, batch_size=len(images), verbose=False))
+        characters = [self.charactersMap[code] for code in class_code]
         return characters
 
     def predictProbability(self, images):
-        probabilities = list(self.model.predict(images,
-                                                batch_size=len(images),
-                                                verbose=False))
+        probabilities = list(
+            self.model.predict(images, batch_size=len(images), verbose=False))
         probabilities = [np.max(probas) for probas in probabilities]
         return probabilities
