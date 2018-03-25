@@ -41,6 +41,13 @@ at the same level as the input dir.
 Example:
         h2l_commands --binarize_data ../data/pngs'''
     )
+    parser.add_argument(
+        '--remove_edges', type=str,
+        help='''Remove edges from all images in the dataset, output dir will
+ be located at the same level as the input dir.
+Example:
+        h2l_commands --remove_edges ../data/collected/splited'''
+    )
     args = parser.parse_args()
     if args.split_data:
         from H2L.preprocessing.dataset import split
@@ -48,3 +55,6 @@ Example:
     elif args.binarize_data:
         from H2L.preprocessing.dataset import binarize
         binarize(sys.argv[2])
+    elif args.remove_edges:
+        from H2L.preprocessing.dataset import remove_edges
+        remove_edges(sys.argv[2])

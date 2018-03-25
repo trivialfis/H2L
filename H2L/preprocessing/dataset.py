@@ -81,17 +81,17 @@ def split(path):
             copyfile(src, dst)
 
 
-def binarize(path):
+def _operation(path, op, outdir):
     os.listdir(os.path.abspath(path))
     pardir = os.path.join(path, os.path.pardir)
     pardir = os.path.normpath(pardir)
     # dir at the same level of input dir.
-    output_dir = os.path.join(pardir, 'binarized')
+    output_dir = os.path.join(pardir, outdir)
     if os.path.exists(output_dir):
         if remove_data_comfirm(output_dir):
             os.system('rm -rf ' + output_dir)
         else:
-            return 0
+            return -1
     os.mkdir(output_dir)
     filepaths = []
     for root, dirs, files in os.walk(path):
@@ -107,11 +107,25 @@ def binarize(path):
         if not os.path.exists(out_dir):
             os.mkdir(out_dir)
         image = cv2.imread(input_path, 0)
-        image = image_utils.binarize2d_inv(image)
+        # image = image_utils.binarize2d_inv(image)
+        image = op(image)
         cv2.imwrite(out_path, image)
         if i % 10 == 0:
             bar.update(1)
     bar.close()
+
+
+def remove_edges(path):
+    def _re(image):
+        image = image_utils.remove_edges(image, 0.15)
+        length = max(image.shape)
+        image = image_utils.fill_to_size(image, (length, length))
+        return image
+    _operation(path, _re, 'noedges')
+
+
+def binarize(path):
+    _operation(path, image_utils.binarize2d_inv, 'binarized')
 
 
 if __name__ == '__main__':
