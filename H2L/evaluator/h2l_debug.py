@@ -49,9 +49,10 @@ class h2l_debugger():
                         img=image)
 
     def display(self, *strings):
-        for s in strings:
-            print(ORANGE + str(s), end=RESET)
-        print('\n', end='')
+        if H2L_DEBUG:
+            for s in strings:
+                print(ORANGE + str(s), end=RESET)
+            print('\n', end='')
 
     def image_info(self, prefix, image):
         print(prefix, '\n',

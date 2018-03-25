@@ -50,6 +50,12 @@ class trainer(object):
                 self.model = models.model_from_json(a.read())
             self.model.load_weights(config.WEIGHTS_FILE)
             debugger.display(config.NAME + ' initialized from file.')
+            if config.ALGORITHM == 'cnn':
+                from .cnns import sequentialModel
+                _, self.paras = sequentialModel(self.train_flow.num_classes)
+            elif config.ALGORITHM == 'res':
+                from .resnet import res32
+                _, self.paras = res32(self.train_flow.num_classes)
         else:
             if config.ALGORITHM == 'cnn':
                 from .cnns import sequentialModel

@@ -133,11 +133,11 @@ def remove_edges(image, escape=0.3):
         rows = down - top
         cols = right - left
         if rows < height * escape and cols < width * escape:
-            print('rows: ', rows, 'height *', escape, height*escape,
-                  'rows < height * escape: ', rows < height*escape,
-                  'cols: ', cols, 'width *', escape, width*escape,
-                  'cols < width * ', escape, cols < width*escape,
-                  'Return full image')
+            debugger.display('rows: ', rows, 'height *', escape, height*escape,
+                             'rows < height * escape: ', rows < height*escape,
+                             'cols: ', cols, 'width *', escape, width*escape,
+                             'cols < width * ', escape, cols < width*escape,
+                             'Return full image')
             return image
 
         result = np.array(image[top: down+1, left: right+1],
