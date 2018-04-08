@@ -25,7 +25,8 @@ import os
 H2L_DEBUG = False
 ORANGE = '\033[38;2;255;185;0m'
 RESET = '\033[0m '
-DUMP_FOLDER = '../../dump'
+DUMP_FOLDER = os.path.join(
+    os.path.dirname(os.path.realpath(__file__)), '../../dump')
 
 if not os.path.exists(DUMP_FOLDER):
     os.mkdir(DUMP_FOLDER)
