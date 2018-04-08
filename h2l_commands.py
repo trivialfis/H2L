@@ -23,6 +23,7 @@ import sys
 
 
 if __name__ == '__main__':
+
     parser = argparse.ArgumentParser(
         description='Various commands for H2L.',
         formatter_class=argparse.RawTextHelpFormatter
@@ -48,7 +49,19 @@ Example:
 Example:
         h2l_commands --remove_edges ../data/collected/splited'''
     )
+    parser.add_argument(
+        '--reduce_noise', type=str,
+        help='''Reduce noise from all images in the dataset, output dir will
+be located at the same level as the input dir.
+Example:
+        h2l_commands --reduce_noise ../data/collected/splited'''
+    )
+    parser.add_argument(
+        '--augment', type=str,
+        help='''Random reform.'''
+    )
     args = parser.parse_args()
+
     if args.split_data:
         from H2L.preprocessing.dataset import split
         split(sys.argv[2])
@@ -58,3 +71,9 @@ Example:
     elif args.remove_edges:
         from H2L.preprocessing.dataset import remove_edges
         remove_edges(sys.argv[2])
+    elif args.reduce_noise:
+        from H2L.preprocessing.dataset import reduce_noise
+        reduce_noise(sys.argv[2])
+    elif args.augment:
+        from H2L.preprocessing.dataset import augment
+        augment(sys.argv[2])

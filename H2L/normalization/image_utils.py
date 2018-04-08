@@ -174,3 +174,15 @@ def fill_to_size(image, dsize):
     filled[delta_r:delta_r+resized.shape[0],
            delta_c:delta_c+resized.shape[1]] = resized
     return filled
+
+
+def reduce_noise(image):
+    if len(image.shape) != 2:
+        raise ValueError('Image shape should be (x, y), found' +
+                         str(image.shape))
+    if image.shape[0] != image.shape[1]:
+        raise ValueError('Expected dsize(x, y) x == y')
+    kernel = np.ones((3, 3), np.uint8)
+    result = cv2.morphologyEx(image, cv2.MORPH_OPEN, kernel)
+    # result = cv2.GaussianBlur(result, (3, 3))
+    return result

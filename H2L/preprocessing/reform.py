@@ -29,8 +29,8 @@ debugger = h2l_debug.h2l_debugger()
 
 MODE = 'less'
 THRESHOLD = 'isodata'
-ROTATE_RANGE = np.pi / 32
-SHEAR_RANGE = np.pi / 32
+ROTATE_RANGE = np.pi / 16
+SHEAR_RANGE = np.pi / 16
 ZOOM_RANGE = 0.05
 CV_FLAG = cv2.INTER_NEAREST
 

@@ -26,6 +26,8 @@ import cv2
 import sys
 from tqdm import tqdm
 
+LIMIT = 1024
+
 
 def remove_data_comfirm(path):
     confirm = input('Remove old data from '+path+' [y/N]: ')
@@ -107,10 +109,54 @@ def _operation(path, op, outdir):
         if not os.path.exists(out_dir):
             os.mkdir(out_dir)
         image = cv2.imread(input_path, 0)
-        # image = image_utils.binarize2d_inv(image)
         image = op(image)
         cv2.imwrite(out_path, image)
         if i % 10 == 0:
+            bar.update(1)
+    bar.close()
+
+
+def augment(path):
+    from .reform import randomReform
+    os.listdir(os.path.abspath(path))
+    pardir = os.path.join(path, os.path.pardir)
+    pardir = os.path.normpath(pardir)
+
+    output_dir = os.path.join(pardir, 'augmented')
+    if os.path.exists(output_dir):
+        if remove_data_comfirm(output_dir):
+            os.system('rm -rf ' + output_dir)
+        else:
+            return -1
+    os.mkdir(output_dir)
+    filepaths = []
+    total = 0
+    for root, dirs, files in os.walk(path):
+        names = [os.path.join(root, name) for name in files]
+        filepaths.append(names)
+        total += len(names)
+
+    bar = tqdm(total=total, unit=' images')
+    for i, alpha in enumerate(filepaths):
+        size = len(alpha)
+        current = 0
+        for input_path in alpha:
+            relpath = os.path.relpath(input_path, path)
+            out_path = os.path.join(output_dir, relpath)
+            out_dir = os.path.dirname(out_path)
+            if not os.path.exists(out_dir):
+                os.makedirs(out_dir)
+            image = cv2.imread(input_path, 0)
+            if size < LIMIT:
+                for j in range(int((LIMIT - size) // size)):
+                    result = randomReform(image.copy(), binarizing=False)
+                    image_target_path = out_path[:-3] + str(j) + out_path[-4:]
+                    cv2.imwrite(image_target_path, result)
+                cv2.imwrite(out_path, image)
+            else:
+                current += 1
+                if current % (size // LIMIT) == 0:
+                    cv2.imwrite(out_path, image)
             bar.update(1)
     bar.close()
 
@@ -126,6 +172,10 @@ def remove_edges(path):
 
 def binarize(path):
     _operation(path, image_utils.binarize2d_inv, 'binarized')
+
+
+def reduce_noise(path):
+    _operation(path, image_utils.reduce_noise, 'noise_reduced')
 
 
 if __name__ == '__main__':
