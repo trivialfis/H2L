@@ -19,6 +19,8 @@ setup(
     packages=find_packages(),
     install_requires=dependencies_list,
     tests_require=['pytest'],
+    data_files=[('share/applications', ['resource/h2l.desktop']),
+                ('share/pixmaps', ['resource/h2l.png'])],
     scripts=['h2l', 'h2l_commands'],
     description=("Experment project for recognizing math equations."),
     long_description=read('README.org'),

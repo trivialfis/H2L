@@ -1,0 +1,11 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=H2L
+Comment=A simple math equation recognizer.
+Type=Application
+Version=0.1
+GenericName=H2L
+Exec=h2l --algorithm=res
+Terminal=false
+Categories=Office;
+Icon=h2l

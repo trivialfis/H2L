@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Copyright ©  2018 Fis Trivial <ybbs.daans@hotmail.com>
+# Copyright © 2018 Fis Trivial <ybbs.daans@hotmail.com>
 #
 # This file is part of H2L.
 #
