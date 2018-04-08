@@ -19,7 +19,7 @@ setup(
     packages=find_packages(),
     install_requires=dependencies_list,
     tests_require=['pytest'],
-    scripts=['h2l.py', 'h2l_commands.py'],
+    scripts=['h2l', 'h2l_commands'],
     description=("Experment project for recognizing math equations."),
     long_description=read('README.org'),
     project_urls={
