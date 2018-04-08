@@ -216,7 +216,7 @@ class equation_builder(object):
         return equation
 
 
-def heursiticGenerate(image):
+def heursiticGenerate(image, bar=None):
     "Generate LaTeX pdf from image using heuristic methods."
 
     if len(image.shape) != 3:
@@ -251,11 +251,20 @@ def heursiticGenerate(image):
     cr = characterRecognizer.recognizer()
     builder = equation_builder(hs, cr)
 
+    if bar is not None:
+        total = len(lineImages)
+        count = 0
     for line in lineImages:
         equations.append(builder.build(line))
+        if bar is not None:
+            count += 1
+            bar.set_fraction(count / total)
+
     if len(equations) == 0:
         debuging.display('No equation found')
-    toLaTeX.transoform(equations)
+
+    outfile = toLaTeX.transoform(equations)
+    return outfile
 
 #
 # evaluate.py ends here

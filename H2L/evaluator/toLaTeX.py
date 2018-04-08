@@ -58,3 +58,4 @@ def transoform(equations, path='~/Downloads/h2l'):
     except Exception:
         print("pdflatex command not found. Please install pdflatex",
               " and make sure it's in the system path")
+    return outfile[:-3] + 'pdf'

@@ -22,6 +22,7 @@ import gi
 import cv2
 import sys
 import argparse
+import subprocess
 from distutils.version import LooseVersion
 from H2L.evaluator import h2l_debug
 import H2L.configuration.characterRecognizerConfig as config
@@ -29,7 +30,9 @@ import H2L.configuration.characterRecognizerConfig as config
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk, GLib, Gio
 from gi.repository import GdkPixbuf
+import os
 
+h2l_debug.H2L_DEBUG = True
 debugger = h2l_debug.h2l_debugger()
 
 
@@ -40,13 +43,15 @@ class H2L_WINDOW(Gtk.ApplicationWindow):
         super().__init__(*args, **kwargs)
 
         self.vbox = Gtk.VBox(spacing=6)
+        bar = Gtk.ProgressBar()
 
         button = Gtk.Button('Choose File')
         button.connect('clicked', self.on_file_clicked)
         self.vbox.pack_start(button, True, True, 0)
+        self.vbox.pack_start(bar, False, True, 0)
 
         self.add(self.vbox)
-        self.set_default_size(800, 600)
+        self.set_default_size(1024, 480)
 
     def on_file_clicked(self, widget):
         dialog = Gtk.FileChooserDialog('Please choose a image', self,
@@ -73,7 +78,7 @@ class H2L_WINDOW(Gtk.ApplicationWindow):
             pixbuf = pixbuf.get_static_image()
 
             w, h = pixbuf.get_width(), pixbuf.get_height()
-            ratio = 400 / w
+            ratio = 600 / w
             width, height = w * ratio, h * ratio
             pixbuf_final = pixbuf.scale_simple(
                 width, height, GdkPixbuf.InterpType.BILINEAR
@@ -96,7 +101,9 @@ class H2L_WINDOW(Gtk.ApplicationWindow):
 
         from H2L.evaluate import heursiticGenerate
         image = cv2.imread(filename)
-        heursiticGenerate(image)
+        outfile = heursiticGenerate(image)
+        debugger.display('outfile: ' + outfile)
+        subprocess.call(['xdg-open', outfile])
 
     def add_filters(self, dialog):
 
@@ -111,55 +118,10 @@ class H2L_WINDOW(Gtk.ApplicationWindow):
         dialog.add_filter(filter_any)
 
 
-class Application(Gtk.Application):
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, application_id="org.example.myapp",
-                         flags=Gio.ApplicationFlags.HANDLES_COMMAND_LINE,
-                         **kwargs)
-        self.window = None
-
-        self.add_main_option("test", ord("t"), GLib.OptionFlags.NONE,
-                             GLib.OptionArg.NONE, "Command line test", None)
-
-    def do_startup(self):
-        Gtk.Application.do_startup(self)
-
-        action = Gio.SimpleAction.new("about", None)
-        action.connect("activate", self.on_about)
-        self.add_action(action)
-
-        action = Gio.SimpleAction.new("quit", None)
-        action.connect("activate", self.on_quit)
-        self.add_action(action)
-
-    def do_activate(self):
-        if not self.window:
-            self.window = H2L_WINDOW(application=self, title="Main Window")
-            print('Activate')
-        self.window.present()
-
-    def do_command_line(self, command_line):
-        options = command_line.get_options_dict()
-
-        if options.contains("test"):
-            print("Test argument recieved")
-
-        self.activate()
-        return 0
-
-    def on_about(self, action, param):
-        about_dialog = Gtk.AboutDialog(transient_for=self.window, modal=True)
-        about_dialog.present()
-
-    def on_quit(self, action, param):
-        self.quit()
-
-
 def gui():
-    ui = H2L_WINDOW()
-    ui.connect('delete-event', Gtk.main_quit)
-    ui.show_all()
+    win = H2L_WINDOW()
+    win.connect('delete-event', Gtk.main_quit)
+    win.show_all()
     Gtk.main()
 
 
