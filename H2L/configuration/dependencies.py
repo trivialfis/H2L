@@ -24,7 +24,7 @@ H2L_DEPENDENCIES = (
     (('scikit-image', 'skimage'), '0.12'),
     (('opencv-python', 'cv2'), '3.3.0'),
     (('keras', 'keras'), '2.1.2'),
-    (('tensorflow-gpu', 'tensorflow'), '1.2.1'),
+    (('tensorflow', 'tensorflow'), '1.2.1'),
     (('pydot', 'pydot'), '1.2.0'),
     (('h5py', 'h5py'), '2.7.0'),
     (('tqdm', 'tqdm'), '4.19.5'),
