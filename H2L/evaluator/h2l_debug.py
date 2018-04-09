@@ -25,11 +25,10 @@ import os
 H2L_DEBUG = False
 ORANGE = '\033[38;2;255;185;0m'
 RESET = '\033[0m '
-DUMP_FOLDER = os.path.join(
-    os.path.dirname(os.path.realpath(__file__)), '../../dump')
+DUMP_DIR = '/tmp/h2l/dump'
 
-if not os.path.exists(DUMP_FOLDER):
-    os.mkdir(DUMP_FOLDER)
+if not os.path.exists(DUMP_DIR):
+    os.makedirs(DUMP_DIR)
 
 
 class h2l_debugger():
@@ -46,7 +45,7 @@ class h2l_debugger():
 
     def save_img(self, image, caption):
         if H2L_DEBUG:
-            cv2.imwrite(filename=os.path.join(DUMP_FOLDER, caption + '.png'),
+            cv2.imwrite(filename=os.path.join(DUMP_DIR, caption + '.png'),
                         img=image)
 
     def display(self, *strings):

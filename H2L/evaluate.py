@@ -157,6 +157,11 @@ class equation_builder(object):
 
         debuging.display('Got', len(characterImages), 'characters.')
 
+        # kernel = np.ones((2, 2), np.uint8)
+        # line = cv2.morphologyEx(line, cv2.MORPH_OPEN, kernel)
+        # kernel = np.ones((4, 4), np.uint8)
+        # line = cv2.morphologyEx(line, cv2.MORPH_CLOSE, kernel)
+
         positioner = position_finder(line)
         superFlag, subFlag = positioner.get_positions(characterImages)
         count = 0

@@ -52,7 +52,8 @@ def transoform(equations, path='~/Downloads/h2l'):
         # Parameters must come before input file.
         subprocess.run(
             ['pdflatex', '-output-directory', outdir, outfile],
-            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            timeout=10)
     except KeyboardInterrupt:
         print('Interrupted')
     except Exception:
