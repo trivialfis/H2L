@@ -38,8 +38,10 @@ def _construct(dep, index):
 
 
 def run_time(dep):
+    '''Run time dependencies for H2L'''
     return _construct(dep, 1)
 
 
 def build_time(dep):
+    '''Build time dependencies for H2L'''
     return _construct(dep, 0)

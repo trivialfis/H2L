@@ -3,11 +3,11 @@
 OCR for handwritten math expression.
 
 * Introduction
-These scripts are build for recognizing handwritten mathematical equations using neural networks. For now, we use convolutional net combined with other traditional techniques to do the trick. For now, only characters recognizer and segmenter are included here. Nothing is working actually.
+H2L is built for recognizing handwritten mathematical equations using neural networks. For now, we use convolutional net combined with other traditional techniques to do the trick.
 
-* General structure
+* Internal structure
 Everything begins at the function =heuristicGenerate= in *evaluate.py*.
-** Steps for generating PDF file:
+** Steps for generating PDF file (internal):
 1. Crop the corresponding area of found text with =crop_image=.
 2. Gray scale and binarize with =binarizeNd=.
 3. Segment all the lines using =line_segmenter.segment=
@@ -24,7 +24,7 @@ Originally, there are some neural nets in the code performing different tasks, b
 Codes for training neural networks are in *trainer* directory, trained models are in *models* directory, configuration for learning parameters are in *configuration* directory, you can use *train.py* to kick the training processes start.
 
 ** Used model
-For now, we only use the convolutional net for character recognition.
+For now, we only use the convolutional net for character recognition, specifically, a modified version of res-50 or a simple cnn.
 
 ** Used dataset
 + [[http://yann.lecun.com/exdb/mnist/][MNIST]]
@@ -33,7 +33,7 @@ For now, we only use the convolutional net for character recognition.
 ** Misc
 Codes are glued together, and since the project is still in experiment phase, there are +lots of+ deprecated but not removed code in this repository. These code will be cleaned in the future.
 
-* What to do
+* What to do next
 There is a huge problem when trying to recognize those characters. Although many papers were published to address the image recognition problem, but the performance described in papers and in real life are different. So, here the main task is to tackle the recognition performance issue.
 
 * TODO To-do list for fis: [0/3]

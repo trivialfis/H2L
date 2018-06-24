@@ -1,0 +1,2 @@
+#+TITLE: Notes
+Many of these script are originally written for manual data pre-processing for various public dataset. Transforming to more organized structure is under process.

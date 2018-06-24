@@ -18,6 +18,8 @@
 # along with H2L.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+# Tests hosted here should be deprecated for better unit tests.
+
 from skimage import io
 import os
 import cv2
@@ -110,15 +112,6 @@ def test_character_segmenter():
         plt.show()
 
 
-def testExtractDoc():
-    from evaluator import extractDocument
-    imageFile = '../resource/test/testform.jpg'
-    image = io.imread(imageFile)
-    result = extractDocument.drawContours(image)
-    plt.imshow(result, cmap='gray')
-    plt.show()
-
-
 def testSegmentRecognize():
     from evaluator import characterRecognizer
     from evaluator import heuristicSegmenter
@@ -173,6 +166,5 @@ if __name__ == '__main__':
             # testRecognizer()
             # testHeuristicSegmenter()
             # testLineSegmenter()
-            # testExtractDoc()
     except KeyboardInterrupt:
         print('\nExit')

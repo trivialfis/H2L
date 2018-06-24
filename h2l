@@ -172,7 +172,7 @@ def parse_args():
     parser.add_argument('--dataset', type=str, help='Dataset for training.')
     parser.add_argument(
         '--algorithm', type=str, help='Algorithm used: svm, cnn, res')
-    parser.add_argument('--nogui', type=bool, help='Run as command.')
+    parser.add_argument('--nogui', type=bool, help='Run with cli.')
     args = parser.parse_args()
 
     config.set_algorithm(args.algorithm)

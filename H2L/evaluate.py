@@ -20,7 +20,6 @@
 
 from .evaluator import heuristicSegmenter
 from .evaluator import characterRecognizer
-# from evaluator import character_svm
 from .evaluator import toLaTeX
 from .evaluator import crop_image
 from .evaluator import line_segmenter
